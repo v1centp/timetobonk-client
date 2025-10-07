@@ -10,119 +10,175 @@ export default function ProductDetail() {
    const [err, setErr] = useState("");
    const [quantity, setQuantity] = useState(1);
    const [feedback, setFeedback] = useState("");
+   const [selectedVariant, setSelectedVariant] = useState(null);
+   const [mainImageUrl, setMainImageUrl] = useState(null);
    const { addItem } = useCart();
 
    useEffect(() => {
       let live = true;
       fetch(`${API}/api/catalog/product/${id}`)
-         .then(r => {
+         .then((r) => {
             if (!r.ok) throw new Error("Produit introuvable");
             return r.json();
          })
-         .then(json => { if (live) { setProd(json); setLoading(false); } })
-         .catch(e => { if (live) { setErr(e.message); setLoading(false); } });
+         .then((json) => {
+            if (!live) return;
+            setProd(json);
+            const variants = Array.isArray(json.variants) ? json.variants : [];
+            const first = variants.find(v => v.connectionStatus === "connected") || variants[0] || null;
+            setSelectedVariant(first);
+            const firstImg =
+               json.previewUrl ||
+               json.externalPreviewUrl ||
+               json.externalThumbnailUrl ||
+               (json.productImages?.[0]?.fileUrl ?? null);
+            setMainImageUrl(firstImg);
+            setLoading(false);
+         })
+         .catch((e) => {
+            if (!live) return;
+            setErr(e.message);
+            setLoading(false);
+         });
       return () => { live = false; };
    }, [id]);
 
-   const displayPrice = useMemo(() => {
-      if (!prod) return null;
+   const handleQuantityChange = (e) => {
+      const n = Number(e.target.value);
+      if (!Number.isFinite(n)) return;
+      setQuantity(Math.max(1, Math.min(99, Math.floor(n))));
+   };
 
-      const priceCandidates = [
-         prod.priceFormatted,
-         prod.formattedPrice,
-         prod.priceDisplay,
-         prod.defaultDisplayedPrice,
-      ];
+   const handlePickVariant = (v) => {
+      setSelectedVariant(v);
+      const img = v?.imageUrl || v?.fileUrl;
+      if (img) setMainImageUrl(img);
+   };
 
-      for (const candidate of priceCandidates) {
-         if (typeof candidate === "string" && candidate.trim()) {
-            return candidate;
-         }
-      }
+   const handleAddToCart = () => {
+      if (!prod || !selectedVariant?.productUid) return alert("Variante indisponible");
+      addItem(
+         {
+            id: prod.id,
+            title: `${prod.title}${selectedVariant?.title ? ` — ${selectedVariant.title}` : ""}`,
+            productUid: selectedVariant.productUid,
+            image: mainImageUrl,
+         },
+         quantity
+      );
+      setFeedback("Produit ajouté au panier !");
+      setTimeout(() => setFeedback(""), 2000);
+   };
 
-      const numericCandidates = [
-         prod.priceAmount,
-         prod.price_value,
-         prod.priceValue,
-         prod.price,
-      ];
-
-      for (const candidate of numericCandidates) {
-         if (candidate === null || candidate === undefined) continue;
-         const value = typeof candidate === "number" ? candidate : Number(candidate);
-         if (Number.isFinite(value)) {
-            const currency =
-               prod.currency ||
-               prod.currencyCode ||
-               prod.priceCurrency ||
-               prod.price?.currency ||
-               "EUR";
-            try {
-               return new Intl.NumberFormat("fr-FR", {
-                  style: "currency",
-                  currency: String(currency).toUpperCase(),
-               }).format(value);
-            } catch {
-               return `${value.toFixed(2)} ${currency}`;
-            }
-         }
-      }
-
-      return null;
+   const gallery = useMemo(() => {
+      if (!prod?.productImages) return [];
+      return prod.productImages.map((img) => ({
+         id: img.id,
+         fileUrl: img.fileUrl,
+         variantIds: img.productVariantIds ?? [],
+      }));
    }, [prod]);
+
+   const imageUrl = (url) => url ? `${API}/api/proxy/image?url=${encodeURIComponent(url)}` : null;
 
    if (loading) return <p className="text-sm text-zinc-500">Chargement…</p>;
    if (err) return <p className="text-sm text-zinc-500">Erreur : {err}</p>;
    if (!prod) return <p className="text-sm text-zinc-500">Produit introuvable.</p>;
 
-   const handleAddToCart = () => {
-      if (!prod) return;
-      addItem(prod, quantity);
-      setFeedback("Produit ajouté au panier !");
-      setTimeout(() => setFeedback(""), 2500);
-   };
-
-   const handleQuantityChange = event => {
-      const next = Number(event.target.value);
-      if (!Number.isFinite(next)) return;
-      setQuantity(Math.max(1, Math.min(99, Math.floor(next))));
-   };
-
-   const image =
-      prod.externalPreviewUrl || prod.externalThumbnailUrl || prod.previewUrl || null;
+   const mainImg = imageUrl(mainImageUrl);
 
    return (
       <section className="container py-10">
-         <div className="grid gap-8 lg:grid-cols-2">
-            <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900">
-               {image ? (
-                  <img
-                     className="h-full w-full object-cover"
-                     src={`${API}/api/proxy/image?url=${encodeURIComponent(image)}`}
-                     alt={prod.title}
-                  />
-               ) : (
-                  <div className="flex h-80 items-center justify-center text-sm text-zinc-500">Pas d’image</div>
+         <div className="grid gap-10 lg:grid-cols-2">
+            {/* Bloc gauche : image + miniatures */}
+            <div className="space-y-3">
+               <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900">
+                  {mainImg ? (
+                     <img
+                        src={mainImg}
+                        alt={prod.title}
+                        className="h-[400px] w-full object-contain bg-neutral-900"
+                     />
+                  ) : (
+                     <div className="flex h-[400px] items-center justify-center text-sm text-zinc-500">
+                        Pas d’image
+                     </div>
+                  )}
+               </div>
+
+               {gallery.length > 1 && (
+                  <div className="flex flex-wrap gap-3 justify-center">
+                     {gallery.map((img) => {
+                        const url = imageUrl(img.fileUrl);
+                        const isActive = mainImageUrl && img.fileUrl === mainImageUrl;
+                        return (
+                           <button
+                              key={img.id}
+                              type="button"
+                              onClick={() => setMainImageUrl(img.fileUrl)}
+                              className={`h-[70px] w-[70px] overflow-hidden rounded-md border ${isActive ? "border-white" : "border-neutral-700"} bg-neutral-900`}
+                           >
+                              {url && (
+                                 <img
+                                    src={url}
+                                    alt=""
+                                    className="h-full w-full object-cover"
+                                 />
+                              )}
+                           </button>
+                        );
+                     })}
+                  </div>
                )}
             </div>
 
-            <div className="space-y-6">
+            {/* Bloc droite : infos produit */}
+            <div className="space-y-5">
                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   La réserve de la Panda Cycling
                </p>
-               <h1 className="text-3xl font-bold leading-tight text-white">{prod.title}</h1>
+               <h1 className="text-3xl font-bold text-white">{prod.title}</h1>
                <div className="text-sm text-zinc-400">Status : {prod.status}</div>
-               {displayPrice && <div className="text-lg font-semibold text-white">{displayPrice}</div>}
 
-               {prod.description && (
-                  <div
-                     className="prose border-t border-neutral-800 pt-6"
-                     dangerouslySetInnerHTML={{ __html: prod.description }}
-                  />
+               {Array.isArray(prod.variants) && prod.variants.length > 0 && (
+                  <div className="space-y-2">
+                     <p className="text-sm text-zinc-300">
+                        Couleur :
+                        <span className="font-medium text-white">
+                           {" "}
+                           {selectedVariant?.title || "—"}
+                        </span>
+                     </p>
+                     <div className="flex flex-wrap gap-2">
+                        {prod.variants
+                           .filter((v) => v.connectionStatus === "connected")
+                           .map((v) => {
+                              const img = gallery.find((g) =>
+                                 Array.isArray(g.variantIds) && g.variantIds.includes(v.id)
+                              );
+                              const url = imageUrl(img?.fileUrl) || mainImg;
+                              const active = selectedVariant?.id === v.id;
+                              return (
+                                 <button
+                                    key={v.id}
+                                    type="button"
+                                    onClick={() => handlePickVariant(v)}
+                                    className={`h-[60px] w-[60px] overflow-hidden rounded-md border ${active ? "border-white" : "border-neutral-700"}`}
+                                 >
+                                    <img
+                                       src={url}
+                                       alt={v.title}
+                                       className="h-full w-full object-cover"
+                                    />
+                                 </button>
+                              );
+                           })}
+                     </div>
+                  </div>
                )}
 
                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <label className="flex w-full items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900/60 px-4 py-2 text-sm text-zinc-300 sm:w-auto">
+                  <label className="flex items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900/60 px-4 py-2 text-sm text-zinc-300">
                      <span>Quantité</span>
                      <input
                         type="number"
@@ -133,27 +189,29 @@ export default function ProductDetail() {
                         className="w-16 rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-white"
                      />
                   </label>
-                  <button className="btn btn-primary w-full sm:w-auto" onClick={handleAddToCart}>
+                  <button
+                     className="btn btn-primary w-full sm:w-auto"
+                     onClick={handleAddToCart}
+                  >
                      Ajouter au panier
                   </button>
-                  <Link className="btn btn-ghost w-full sm:w-auto hover:border-neutral-500" to="/catalog">
-                     Retour au catalogue
+                  <Link
+                     className="btn btn-ghost w-full sm:w-auto hover:border-neutral-500"
+                     to="/catalog"
+                  >
+                     Retour
                   </Link>
                </div>
 
-               {feedback && <p className="text-sm font-medium text-zinc-300">{feedback}</p>}
+               {feedback && (
+                  <p className="text-sm font-medium text-zinc-300">{feedback}</p>
+               )}
 
-               {Array.isArray(prod.productVariantOptions) && prod.productVariantOptions.length > 0 && (
-                  <div className="space-y-3 rounded-xl border border-neutral-800 bg-neutral-900/60 p-4">
-                     <h3 className="text-lg font-semibold text-white">Options</h3>
-                     <ul className="space-y-2 pl-4 text-sm text-zinc-300">
-                        {prod.productVariantOptions.map(opt => (
-                           <li key={opt.name}>
-                              <strong>{opt.name}:</strong> {opt.values.join(", ")}
-                           </li>
-                        ))}
-                     </ul>
-                  </div>
+               {prod.description && (
+                  <div
+                     className="prose border-t border-neutral-800 pt-4 max-w-prose"
+                     dangerouslySetInnerHTML={{ __html: prod.description }}
+                  />
                )}
             </div>
          </div>

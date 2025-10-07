@@ -2,12 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
 
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
+
+
 const getStripe = (() => {
   let stripePromise;
   return () => {
     if (stripePromise) return stripePromise;
 
-    const publicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+    const publicKey = import.meta.env.VITE_API_URL;
     if (!publicKey || typeof window === "undefined") {
       return Promise.resolve(null);
     }
@@ -96,21 +99,21 @@ export default function Checkout() {
         throw new Error("La clé publique Stripe n'est pas configurée.");
       }
 
-      const response = await fetch("/api/create-checkout-session", {
+      const response = await fetch("/api/payments/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((item) => ({
-            id: item.id,
-            title: item.title,
-            price: item.price,
-            currency: item.currency,
-            quantity: item.quantity,
+          items: items.map(i => ({
+            productUid: i.productUid,
+            title: i.title,
+            image: i.image,
+            quantity: i.quantity,
           })),
           successUrl: `${window.location.origin}/checkout?success=true`,
           cancelUrl: `${window.location.origin}/checkout?canceled=true`,
         }),
       });
+
 
       if (!response.ok) {
         const payload = await response.json().catch(() => null);

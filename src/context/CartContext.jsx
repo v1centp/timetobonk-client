@@ -113,6 +113,7 @@ function normalizeProduct(product) {
   const title = product.title || product.name || `Produit ${id}`;
   const { amount, currency } = extractPrice(product);
   const image = pickImage(product);
+  const productUid = product.productUid || product?.variant?.productUid || null;
 
   return {
     id: String(id),
@@ -120,8 +121,10 @@ function normalizeProduct(product) {
     price: Number.isFinite(amount) ? amount : 0,
     currency,
     image,
+    productUid,
   };
 }
+
 
 function cartReducer(state, action) {
   switch (action.type) {
