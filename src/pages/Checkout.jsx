@@ -98,7 +98,7 @@ export default function Checkout() {
         throw new Error("La clé publique Stripe n'est pas configurée.");
       }
 
-      const response = await fetch("/api/payments/create-checkout-session", {
+      const response = await fetch(`${API_BASE}/api/payments/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
