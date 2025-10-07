@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useCart } from "../context/CartContext.jsx";
 
 const NAV_ITEMS = [
   { to: "/", label: "Home", end: true },
@@ -9,6 +10,7 @@ const NAV_ITEMS = [
 
 export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { totalQuantity } = useCart();
 
   useEffect(() => {
     if (!mobileOpen) return undefined;
@@ -41,6 +43,8 @@ export default function Layout({ children }) {
       isActive ? "bg-neutral-800 text-white" : "text-zinc-300"
     }`;
 
+  const cartLabel = totalQuantity > 0 ? `Panier (${totalQuantity})` : "Panier";
+
   return (
     <div className="flex min-h-screen flex-col bg-neutral-950 text-zinc-100 font-sans">
       <header className="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/90 backdrop-blur">
@@ -68,6 +72,9 @@ export default function Layout({ children }) {
                 {item.label}
               </NavLink>
             ))}
+            <NavLink to="/checkout" className={renderDesktopLink}>
+              {cartLabel}
+            </NavLink>
           </nav>
 
           <button
@@ -112,6 +119,13 @@ export default function Layout({ children }) {
                   {item.label}
                 </NavLink>
               ))}
+              <Link
+                to="/checkout"
+                onClick={closeMobile}
+                className="block rounded-lg px-3 py-2 text-base font-semibold text-white transition hover:bg-neutral-800"
+              >
+                {cartLabel}
+              </Link>
             </nav>
           </aside>
         </div>
