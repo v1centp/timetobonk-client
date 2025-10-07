@@ -24,15 +24,17 @@ export default function Catalog() {
       return () => { live = false; };
    }, []);
 
-   if (loading) return <p className="muted">Chargement du catalogue…</p>;
-   if (err) return <p className="error">Erreur : {err}</p>;
-   if (!items.length) return <p>Aucun produit pour l’instant.</p>;
+   if (loading) return <p className="text-sm text-zinc-500">Chargement du catalogue…</p>;
+   if (err) return <p className="text-sm text-zinc-500">Erreur : {err}</p>;
+   if (!items.length) return <p className="text-sm text-zinc-500">Aucun produit pour l’instant.</p>;
 
    return (
-      <section>
-         <h1>Catalogue</h1>
-         <p className="muted">Clique sur un produit pour voir le détail.</p>
-         <div className="grid">
+      <section className="container space-y-4 py-10">
+         <div className="space-y-2">
+            <h1 className="text-3xl font-bold">Catalogue</h1>
+            <p className="text-sm text-zinc-400">Clique sur un produit pour voir le détail.</p>
+         </div>
+         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {items.map(p => <ProductCard key={p.id} product={p} />)}
          </div>
       </section>
