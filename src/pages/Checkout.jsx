@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
+import { formatCurrency } from "../lib/pricing.js";
+import { API } from "../lib/api.js";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
 
@@ -60,15 +62,11 @@ const getStripe = (() => {
   };
 })();
 
-function formatCurrency(amount, currency = "EUR") {
-  try {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: currency.toUpperCase(),
-    }).format(amount);
-  } catch {
-    return `${amount.toFixed(2)} ${currency}`;
-  }
+function toProxyImage(url) {
+  if (!url || typeof url !== "string") return null;
+  if (url.includes("/api/proxy/image")) return url;
+  if (!API) return url;
+  return `${API}/api/proxy/image?url=${encodeURIComponent(url)}`;
 }
 
 export default function Checkout() {
@@ -106,8 +104,12 @@ export default function Checkout() {
             productUid: i.productUid,
             title: i.title,
             image: i.image,
+            imageOriginal: i.imageOriginal,
             quantity: i.quantity,
+            unitAmount: i.price,
+            currency: i.currency,
           })),
+          currency: "CHF",
           successUrl: `${window.location.origin}/checkout?success=true`,
           cancelUrl: `${window.location.origin}/checkout?canceled=true`,
         }),
@@ -142,7 +144,7 @@ export default function Checkout() {
     updateQuantity(id, numeric);
   };
 
-  const summaryCurrency = currency?.toUpperCase?.() || "EUR";
+  const summaryCurrency = currency?.toUpperCase?.() || "CHF";
   const hasItems = items.length > 0;
 
   return (
@@ -186,16 +188,21 @@ export default function Checkout() {
               const productTitle = item.productTitle || item.title;
               const variantTitle = item.variantTitle && item.variantTitle !== productTitle ? item.variantTitle : null;
               const displayTitle = item.title || productTitle;
+              const itemImage = item.image || toProxyImage(item.imageOriginal || item.originalImage);
+              const unitPrice = Number.isFinite(item.price) ? item.price : 0;
+              const lineTotal = Number((unitPrice * item.quantity).toFixed(2));
+              const unitPriceLabel = formatCurrency(unitPrice, item.currency);
+              const lineTotalLabel = formatCurrency(lineTotal, item.currency);
 
               return (
                 <div
                   key={item.id}
                   className="glass-panel flex flex-col gap-5 p-5 sm:flex-row sm:items-center"
                 >
-                  {item.image ? (
+                  {itemImage ? (
                     <div className="flex h-32 w-full items-center justify-center rounded-2xl bg-neutral-950 sm:h-24 sm:w-24">
                       <img
-                        src={item.image}
+                        src={itemImage}
                         alt={displayTitle}
                         className="max-h-full max-w-full object-contain p-3"
                       />
@@ -214,8 +221,11 @@ export default function Checkout() {
                           <p className="text-sm text-zinc-400">Variante : {variantTitle}</p>
                         )}
                       </div>
-                      <span className="text-sm text-zinc-400">
-                        Prix unitaire : {formatCurrency(item.price, item.currency)}
+                      <span className="text-sm text-zinc-300">
+                        Prix total : {lineTotalLabel}
+                        <span className="block text-xs text-zinc-500">
+                          soit {unitPriceLabel} / unité
+                        </span>
                       </span>
                     </div>
 

@@ -1,4 +1,4 @@
-const CURRENCY_FALLBACK = "EUR";
+const CURRENCY_FALLBACK = "CHF";
 
 export function parseAmount(value) {
   if (typeof value === "number" && Number.isFinite(value)) {
@@ -72,27 +72,62 @@ export function resolveRawPrice(product, variant) {
   return null;
 }
 
-export function applyDisplayPriceRules(amount) {
-  if (!Number.isFinite(amount)) return null;
+export function applySwissRounding(amount) {
+  const numeric = Number(amount);
+  if (!Number.isFinite(numeric)) return null;
 
-  const boosted = amount + 15;
-  const baseThreshold = 4.9;
+  const baseCents = Math.round(numeric * 100);
+  const increasedCents = baseCents + 1500;
 
-  if (boosted <= baseThreshold) {
-    return Number(baseThreshold.toFixed(2));
-  }
+  const tens = Math.floor(increasedCents / 1000);
+  const candidates = [
+    tens * 1000 + 490,
+    tens * 1000 + 990,
+    (tens + 1) * 1000 + 490,
+    (tens + 1) * 1000 + 990,
+  ];
 
-  const steps = Math.ceil((boosted - baseThreshold) / 5);
-  const finalAmount = baseThreshold + steps * 5;
-  return Number(finalAmount.toFixed(2));
+  const adjusted =
+    candidates.find((value) => value >= increasedCents) ?? candidates[candidates.length - 1];
+  return Number((adjusted / 100).toFixed(2));
 }
 
 export function resolveDisplayPrice(product, variant) {
   const rawPrice = resolveRawPrice(product, variant);
   if (!rawPrice) return null;
-  const amount = applyDisplayPriceRules(rawPrice.amount);
+  const amount = applySwissRounding(rawPrice.amount);
   if (amount === null) return null;
   return { amount, currency: rawPrice.currency };
+}
+
+export function getProductDisplayPrice(product, variant) {
+  const price = product?.price;
+  if (price !== undefined && price !== null) {
+    const amount = parseAmount(
+      price.amount ??
+        price.unitAmount ??
+        price.value ??
+        price.total ??
+        price.price ??
+        price.raw?.unitAmount ??
+        price.raw?.price ??
+        price
+    );
+
+    if (amount !== null) {
+      const currency = inferCurrency(price, inferCurrency(product));
+      return {
+        amount: Number(amount),
+        currency,
+        from: Boolean(price.from),
+      };
+    }
+  }
+
+  const safeProduct = price !== undefined ? { ...product, price: undefined } : product;
+  const resolved = resolveDisplayPrice(safeProduct, variant);
+  if (!resolved) return null;
+  return { ...resolved, from: false };
 }
 
 export function formatCurrency(amount, currency = CURRENCY_FALLBACK) {

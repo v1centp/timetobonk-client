@@ -26,7 +26,7 @@ export default function Home() {
             <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-neutral-900/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-zinc-300">
               <span>Nouveautés</span>
               <span className="inline-flex h-1.5 w-1.5 rounded-full bg-white/60" />
-              <span>Réserve 2024</span>
+              <span>Réserve 2025</span>
             </div>
 
             <div className="space-y-6">

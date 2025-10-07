@@ -1,18 +1,106 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { API } from "../lib/api.js";
 import { useCart } from "../context/CartContext.jsx";
-import { formatCurrency, resolveDisplayPrice } from "../lib/pricing.js";
+import { formatCurrency, inferCurrency, parseAmount } from "../lib/pricing.js";
 
-const STATUS_TONES = {
-  connected: "border-emerald-400/40 bg-emerald-400/10 text-emerald-200",
-  default: "border-white/20 bg-white/10 text-zinc-200",
-};
+function normalizePrice(source, fallbackCurrency = "EUR") {
+  if (source == null) return null;
 
-function normalizeStatus(status) {
-  if (typeof status !== "string") return "default";
-  if (/connected|active|available/i.test(status)) return "connected";
-  return "default";
+  const candidates = [];
+  if (typeof source === "object") {
+    candidates.push(
+      source.amount,
+      source.unitAmount,
+      source.value,
+      source.price,
+      source.unitPrice,
+      source.total
+    );
+    if (source.raw) {
+      candidates.push(source.raw.unitAmount, source.raw.unitPrice, source.raw.price);
+    }
+  } else {
+    candidates.push(source);
+  }
+
+  let amount = null;
+  for (const candidate of candidates) {
+    const parsed = parseAmount(candidate);
+    if (parsed !== null) {
+      amount = parsed;
+      break;
+    }
+  }
+  if (amount === null) return null;
+
+  const currency =
+    typeof source === "object" && source !== null
+      ? inferCurrency(source, fallbackCurrency)
+      : fallbackCurrency;
+
+  const quantityCandidate =
+    (typeof source === "object" && source !== null && (
+      source.quantity ??
+      source.qty ??
+      source.minimumQuantity ??
+      source.minQuantity ??
+      source.raw?.quantity ??
+      source.raw?.qty ??
+      source.raw?.minimumQuantity ??
+      source.raw?.minQuantity
+    )) ??
+    null;
+  const quantity = Number(quantityCandidate);
+
+  let total = null;
+  if (typeof source === "object" && source !== null) {
+    const totalCandidates = [
+      source.total,
+      source.valueTotal,
+      source.raw?.total,
+      source.raw?.totalAmount,
+      source.raw?.totalPrice,
+      source.raw?.price,
+    ];
+    for (const candidate of totalCandidates) {
+      const parsed = parseAmount(candidate);
+      if (parsed !== null) {
+        total = parsed;
+        break;
+      }
+    }
+  }
+
+  return {
+    amount,
+    currency,
+    quantity: Number.isFinite(quantity) && quantity > 0 ? quantity : null,
+    total,
+  };
+}
+
+function resolveProductUid(product, variant, fallback) {
+  if (variant?.productUid) return variant.productUid;
+  if (product?.product?.productUid) return product.product.productUid;
+  if (product?.productUid) return product.productUid;
+  if (variant?.id) return variant.id;
+  if (product?.id) return product.id;
+  return fallback ?? null;
+}
+
+function resolveVariantImage(variant) {
+  if (!variant) return null;
+  return (
+    variant.imageUrl ||
+    variant.fileUrl ||
+    variant.previewUrl ||
+    variant.previewImage ||
+    variant.image ||
+    variant.media?.[0]?.url ||
+    variant.assets?.[0]?.fileUrl ||
+    null
+  );
 }
 
 export default function ProductDetail() {
@@ -24,6 +112,10 @@ export default function ProductDetail() {
   const [feedback, setFeedback] = useState("");
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [mainImageUrl, setMainImageUrl] = useState(null);
+  const [defaultImage, setDefaultImage] = useState(null);
+  const [priceInfo, setPriceInfo] = useState(null);
+  const [priceLoading, setPriceLoading] = useState(false);
+  const [priceErr, setPriceErr] = useState("");
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -37,15 +129,20 @@ export default function ProductDetail() {
       .then((json) => {
         if (!live) return;
         setProd(json);
+        setPriceErr("");
+        setPriceInfo(normalizePrice(json.price, inferCurrency(json, "CHF")));
+        setPriceLoading(false);
         const variants = Array.isArray(json.variants) ? json.variants : [];
         const first = variants.find((v) => v.connectionStatus === "connected") || variants[0] || null;
         setSelectedVariant(first);
-        const firstImg =
+        const fallbackImage =
           json.previewUrl ||
           json.externalPreviewUrl ||
           json.externalThumbnailUrl ||
+          json.thumbnailUrl ||
           (json.productImages?.[0]?.fileUrl ?? null);
-        setMainImageUrl(firstImg);
+        setDefaultImage(fallbackImage || null);
+        setMainImageUrl(fallbackImage || null);
         setLoading(false);
       })
       .catch((e) => {
@@ -58,21 +155,130 @@ export default function ProductDetail() {
     };
   }, [id]);
 
-  const gallery = useMemo(() => {
-    if (!prod?.productImages) return [];
-    return prod.productImages.map((img) => ({
-      id: img.id,
-      fileUrl: img.fileUrl,
-      variantIds: img.productVariantIds ?? [],
-    }));
-  }, [prod]);
-
   const availableVariants = useMemo(() => {
     if (!Array.isArray(prod?.variants)) return [];
     const connected = prod.variants.filter((variant) => variant.connectionStatus === "connected");
     if (connected.length > 0) return connected;
     return prod.variants;
   }, [prod]);
+
+  const variantImageMap = useMemo(() => {
+    const map = new Map();
+    if (Array.isArray(prod?.productImages)) {
+      prod.productImages.forEach((img) => {
+        if (!img?.fileUrl) return;
+        const addKey = (key) => {
+          if (key === undefined || key === null) return;
+          const str = String(key);
+          map.set(str, img.fileUrl);
+          if (typeof str === "string") {
+            map.set(str.toLowerCase(), img.fileUrl);
+          }
+        };
+
+        if (Array.isArray(img.productVariantIds)) {
+          img.productVariantIds.forEach(addKey);
+        }
+        if (Array.isArray(img.productVariantUids)) {
+          img.productVariantUids.forEach(addKey);
+        }
+        addKey(img.productVariantId);
+        addKey(img.productVariantUid);
+        addKey(img.productVariantSku);
+      });
+    }
+    return map;
+  }, [prod]);
+
+  const getVariantImage = useCallback(
+    (variant) => {
+      if (!variant) return null;
+      const candidates = [
+        variant.id,
+        variant.productUid,
+        typeof variant.productUid === "string" ? variant.productUid.toLowerCase() : null,
+        variant.sku,
+        typeof variant.sku === "string" ? variant.sku.toLowerCase() : null,
+      ].filter((value) => value !== undefined && value !== null);
+
+      for (const candidate of candidates) {
+        const key = String(candidate);
+        if (variantImageMap.has(key)) {
+          return variantImageMap.get(key);
+        }
+      }
+
+      return resolveVariantImage(variant);
+    },
+    [variantImageMap]
+  );
+
+  const fallbackCurrency = useMemo(() => inferCurrency(prod, "CHF"), [prod]);
+  const productUid = useMemo(() => resolveProductUid(prod, selectedVariant, id), [prod, selectedVariant, id]);
+
+  useEffect(() => {
+    if (!selectedVariant) {
+      if (defaultImage) setMainImageUrl(defaultImage);
+      return;
+    }
+    const variantImage = getVariantImage(selectedVariant);
+    if (variantImage) {
+      setMainImageUrl(variantImage);
+    } else if (defaultImage) {
+      setMainImageUrl(defaultImage);
+    }
+  }, [selectedVariant, defaultImage, getVariantImage]);
+
+  useEffect(() => {
+    if (!prod || !productUid) return;
+
+    let cancelled = false;
+    const controller = new AbortController();
+
+    setPriceLoading(true);
+    setPriceErr("");
+
+    const params = new URLSearchParams();
+    params.set("qty", String(quantity));
+    if (fallbackCurrency) {
+      params.set("currency", fallbackCurrency);
+    }
+
+    fetch(`${API}/api/catalog/product/${encodeURIComponent(productUid)}/price?${params.toString()}`, {
+      signal: controller.signal,
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Impossible de récupérer le prix pour cette configuration.");
+        return res.json();
+      })
+      .then((json) => {
+        if (cancelled) return;
+        setPriceInfo(
+          normalizePrice(
+            {
+              amount: json.unitAmount,
+              unitAmount: json.unitAmount,
+              total: json.total,
+              quantity: json.quantity,
+              currency: json.currency,
+            },
+            fallbackCurrency
+          )
+        );
+        setPriceLoading(false);
+      })
+      .catch((error) => {
+        if (cancelled || error.name === "AbortError") return;
+        setPriceErr(error.message);
+        setPriceLoading(false);
+        setPriceInfo((prev) => prev ?? normalizePrice(prod.price, fallbackCurrency));
+      });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [prod, productUid, quantity, fallbackCurrency]);
 
   const imageUrl = (url) => (url ? `${API}/api/proxy/image?url=${encodeURIComponent(url)}` : null);
 
@@ -92,14 +298,7 @@ export default function ProductDetail() {
 
   const handlePickVariant = (variant) => {
     setSelectedVariant(variant);
-    const img = variant?.imageUrl || variant?.fileUrl;
-    if (img) setMainImageUrl(img);
   };
-
-  const displayPrice = useMemo(() => {
-    if (!prod) return null;
-    return resolveDisplayPrice(prod, selectedVariant);
-  }, [prod, selectedVariant]);
 
   const mainImg = imageUrl(mainImageUrl);
 
@@ -116,13 +315,14 @@ export default function ProductDetail() {
   }, [selectedVariant]);
 
   const handleAddToCart = () => {
-    if (!prod || !selectedVariant?.productUid) {
+    if (!prod || !productUid) {
       alert("Variante indisponible");
       return;
     }
 
-    const currency = (displayPrice?.currency || prod?.currency || "eur").toLowerCase();
-    const variantId = selectedVariant.id || selectedVariant.productUid || selectedVariant.sku || "default";
+    const currency = (priceInfo?.currency || fallbackCurrency || "eur").toLowerCase();
+    const variantId =
+      selectedVariant?.id || selectedVariant?.productUid || selectedVariant?.sku || productUid;
     const displayTitle = selectedVariantLabel ? `${prod.title} — ${selectedVariantLabel}` : prod.title;
 
     addItem(
@@ -133,10 +333,11 @@ export default function ProductDetail() {
         productTitle: prod.title,
         variantTitle: selectedVariantLabel,
         variantId,
-        variantSku: selectedVariant.sku || null,
-        productUid: selectedVariant.productUid,
+        variantSku: selectedVariant?.sku || null,
+        productUid,
         image: mainImg,
-        price: displayPrice?.amount ?? 0,
+        imageOriginal: mainImageUrl,
+        price: priceInfo?.amount ?? 0,
         currency,
       },
       quantity
@@ -147,10 +348,14 @@ export default function ProductDetail() {
   };
 
   const formattedPrice = useMemo(() => {
-    if (!displayPrice) return null;
-    return formatCurrency(displayPrice.amount, displayPrice.currency);
-  }, [displayPrice]);
-  const statusTone = STATUS_TONES[normalizeStatus(prod?.status)] ?? STATUS_TONES.default;
+    if (!priceInfo) return null;
+    return formatCurrency(priceInfo.amount, priceInfo.currency);
+  }, [priceInfo]);
+
+  const formattedTotalPrice = useMemo(() => {
+    if (!priceInfo || !priceInfo.total || !priceInfo.quantity || priceInfo.quantity <= 1) return null;
+    return formatCurrency(priceInfo.total, priceInfo.currency);
+  }, [priceInfo]);
 
   if (loading) return <p className="text-sm text-zinc-500">Chargement…</p>;
   if (err) return <p className="text-sm text-zinc-500">Erreur : {err}</p>;
@@ -176,50 +381,28 @@ export default function ProductDetail() {
             ) : (
               <div className="flex h-[420px] items-center justify-center text-sm text-zinc-500">Pas d’image</div>
             )}
-            {prod.status && (
-              <span
-                className={`absolute left-6 top-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] ${statusTone}`}
-              >
-                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-white/70" aria-hidden="true" />
-                {prod.status}
-              </span>
-            )}
           </div>
-
-          {gallery.length > 1 && (
-            <div className="flex flex-wrap gap-3">
-              {gallery.map((img) => {
-                const url = imageUrl(img.fileUrl);
-                const isActive = mainImageUrl && img.fileUrl === mainImageUrl;
-                return (
-                  <button
-                    key={img.id}
-                    type="button"
-                    onClick={() => setMainImageUrl(img.fileUrl)}
-                    className={`overflow-hidden rounded-2xl border transition ${isActive
-                        ? "border-white/40 bg-white/10"
-                        : "border-white/10 bg-neutral-900/70 hover:border-white/20"
-                      }`}
-                    style={{ width: "84px", height: "84px" }}
-                  >
-                    {url ? (
-                      <img src={url} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      <span className="flex h-full items-center justify-center text-[10px] text-zinc-500">—</span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          )}
         </div>
 
         <div className="space-y-8 lg:pl-6">
           <div className="space-y-4">
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500">La réserve de la Panda Cycling</p>
             <h1 className="text-4xl font-semibold text-white">{prod.title}</h1>
-            {formattedPrice && <p className="text-lg font-medium text-white">{formattedPrice}</p>}
-            <p className="text-sm text-zinc-400">Status : {prod.status}</p>
+            <div className="space-y-1">
+              {priceLoading && <p className="text-sm text-zinc-400">Calcul du prix…</p>}
+              {!priceLoading && formattedPrice && (
+                <p className="text-lg font-medium text-white">{formattedPrice}</p>
+              )}
+              {!priceLoading && !formattedPrice && !priceErr && (
+                <p className="text-sm text-zinc-400">Prix indisponible pour cette configuration.</p>
+              )}
+              {formattedTotalPrice && priceInfo?.quantity && (
+                <p className="text-xs text-zinc-400">
+                  Pack de {priceInfo.quantity} : {formattedTotalPrice}
+                </p>
+              )}
+              {priceErr && <p className="text-xs text-amber-300">{priceErr}</p>}
+            </div>
           </div>
 
           {availableVariants.length > 0 && (
@@ -241,17 +424,19 @@ export default function ProductDetail() {
 
               <div className="flex flex-wrap gap-3">
                 {availableVariants.map((variant) => {
-                  const img = gallery.find((g) => Array.isArray(g.variantIds) && g.variantIds.includes(variant.id));
-                  const thumb = imageUrl(img?.fileUrl || variant?.imageUrl || variant?.fileUrl);
-                  const active = selectedVariant?.id === variant.id;
+                  const variantImage = getVariantImage(variant);
+                  const thumb = imageUrl(variantImage || defaultImage);
+                  const active =
+                    (!!selectedVariant?.id && selectedVariant.id === variant.id) ||
+                    (!!selectedVariant?.productUid && selectedVariant.productUid === variant.productUid);
                   return (
                     <button
                       key={variant.id || variant.productUid}
                       type="button"
                       onClick={() => handlePickVariant(variant)}
                       className={`group flex w-[120px] flex-col overflow-hidden rounded-2xl border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 ${active
-                          ? "border-white/40 bg-white/10 text-white shadow-soft"
-                          : "border-white/10 bg-neutral-900/60 text-zinc-300 hover:border-white/25"
+                        ? "border-white/40 bg-white/10 text-white shadow-soft"
+                        : "border-white/10 bg-neutral-900/60 text-zinc-300 hover:border-white/25"
                         }`}
                     >
                       <div className="relative h-20 w-full overflow-hidden">

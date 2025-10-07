@@ -1,38 +1,21 @@
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import { API } from "../lib/api.js";
-import { formatCurrency, resolveDisplayPrice } from "../lib/pricing.js";
-
-const STATUS_STYLES = [
-  {
-    match: (status) => /connected|active|available/i.test(status || ""),
-    classes: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
-  },
-  {
-    match: (status) => /draft|pending|processing/i.test(status || ""),
-    classes: "border-amber-300/30 bg-amber-300/10 text-amber-200",
-  },
-  {
-    match: () => true,
-    classes: "border-white/20 bg-white/10 text-zinc-200",
-  },
-];
-
-function getStatusClasses(status) {
-  const entry = STATUS_STYLES.find((item) => item.match(status));
-  return entry?.classes ?? STATUS_STYLES[STATUS_STYLES.length - 1].classes;
-}
+import { formatCurrency, getProductDisplayPrice } from "../lib/pricing.js";
 
 export default function ProductCard({ product, layout = "grid" }) {
-  const { id, title, image, status } = product;
+  const { id, title, image } = product;
   const preview = image ? `${API}/api/proxy/image?url=${encodeURIComponent(image)}` : null;
-  const statusClasses = getStatusClasses(status);
   const isList = layout === "list";
-  const displayPrice = useMemo(() => resolveDisplayPrice(product), [product]);
+  const displayPrice = useMemo(() => getProductDisplayPrice(product), [product]);
   const formattedPrice = useMemo(() => {
     if (!displayPrice) return null;
     return formatCurrency(displayPrice.amount, displayPrice.currency);
   }, [displayPrice]);
+  const priceLabel = useMemo(() => {
+    if (!formattedPrice) return null;
+    return displayPrice?.from ? `Dès ${formattedPrice}` : formattedPrice;
+  }, [formattedPrice, displayPrice]);
 
   return (
     <article
@@ -55,12 +38,15 @@ export default function ProductCard({ product, layout = "grid" }) {
             Pas d’image
           </div>
         )}
-        {status && (
+        {priceLabel ? (
           <span
-            className={`absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] ${statusClasses}`}
+            className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-lg"
           >
-            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-white/60" aria-hidden="true" />
-            {status}
+            {priceLabel}
+          </span>
+        ) : (
+          <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-neutral-900/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-zinc-300">
+            Prix indisponible
           </span>
         )}
       </div>
@@ -68,7 +54,6 @@ export default function ProductCard({ product, layout = "grid" }) {
       <div className={`flex flex-1 flex-col justify-between gap-6 ${isList ? "p-6 sm:p-8" : "p-6"}`}>
         <div className="space-y-3">
           <h3 className="text-lg font-semibold leading-snug text-white">{title}</h3>
-          {formattedPrice && <p className="text-base font-semibold text-white">{formattedPrice}</p>}
           <p className="text-sm text-zinc-400">Sélectionne ce produit pour découvrir ses variantes détaillées.</p>
         </div>
 
