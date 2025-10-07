@@ -196,11 +196,10 @@ export default function ProductDetail() {
                     key={img.id}
                     type="button"
                     onClick={() => setMainImageUrl(img.fileUrl)}
-                    className={`overflow-hidden rounded-2xl border transition ${
-                      isActive
+                    className={`overflow-hidden rounded-2xl border transition ${isActive
                         ? "border-white/40 bg-white/10"
                         : "border-white/10 bg-neutral-900/70 hover:border-white/20"
-                    }`}
+                      }`}
                     style={{ width: "84px", height: "84px" }}
                   >
                     {url ? (
@@ -250,11 +249,10 @@ export default function ProductDetail() {
                       key={variant.id || variant.productUid}
                       type="button"
                       onClick={() => handlePickVariant(variant)}
-                      className={`group flex w-[120px] flex-col overflow-hidden rounded-2xl border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 ${
-                        active
+                      className={`group flex w-[120px] flex-col overflow-hidden rounded-2xl border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 ${active
                           ? "border-white/40 bg-white/10 text-white shadow-soft"
                           : "border-white/10 bg-neutral-900/60 text-zinc-300 hover:border-white/25"
-                      }`}
+                        }`}
                     >
                       <div className="relative h-20 w-full overflow-hidden">
                         {thumb ? (

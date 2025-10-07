@@ -36,16 +36,14 @@ export default function ProductCard({ product, layout = "grid" }) {
 
   return (
     <article
-      className={`group relative overflow-hidden rounded-[2rem] border border-white/10 bg-neutral-900/60 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-neutral-900 ${
-        isList ? "flex flex-col sm:flex-row" : "flex h-full flex-col"
-      }`}
+      className={`group relative overflow-hidden rounded-[2rem] border border-white/10 bg-neutral-900/60 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-neutral-900 ${isList ? "flex flex-col sm:flex-row" : "flex h-full flex-col"
+        }`}
     >
       <div
-        className={`relative overflow-hidden ${
-          isList
-            ? "h-52 w-full sm:h-auto sm:w-52"
-            : "h-56 w-full"
-        }`}
+        className={`relative overflow-hidden ${isList
+          ? "h-52 w-full sm:h-auto sm:w-52"
+          : "h-56 w-full"
+          }`}
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_70%)] opacity-0 transition duration-500 group-hover:opacity-100" />
         {preview ? (
