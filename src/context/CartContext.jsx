@@ -110,14 +110,32 @@ function normalizeProduct(product) {
 
   if (!id) return null;
 
-  const title = product.title || product.name || `Produit ${id}`;
+  const providedTitle = product.title || product.name || null;
+  const productTitle =
+    product.productTitle ||
+    product.parentTitle ||
+    product.parent?.title ||
+    providedTitle ||
+    `Produit ${id}`;
+  const variantTitle =
+    product.variantTitle ||
+    product.variantName ||
+    product.variant_label ||
+    product.variant?.title ||
+    product.variant?.name ||
+    null;
+  const displayTitle = product.displayTitle || providedTitle || (variantTitle ? `${productTitle} — ${variantTitle}` : productTitle);
   const { amount, currency } = extractPrice(product);
   const image = pickImage(product);
   const productUid = product.productUid || product?.variant?.productUid || null;
 
   return {
     id: String(id),
-    title,
+    title: displayTitle,
+    productTitle,
+    variantTitle,
+    variantId: product.variantId || product.variant?.id || null,
+    variantSku: product.variantSku || product.variant?.sku || null,
     price: Number.isFinite(amount) ? amount : 0,
     currency,
     image,

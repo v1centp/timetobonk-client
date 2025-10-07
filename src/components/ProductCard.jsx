@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+import { useMemo } from "react";
 import { API } from "../lib/api.js";
+import { formatCurrency, resolveDisplayPrice } from "../lib/pricing.js";
 
 const STATUS_STYLES = [
   {
@@ -26,6 +28,11 @@ export default function ProductCard({ product, layout = "grid" }) {
   const preview = image ? `${API}/api/proxy/image?url=${encodeURIComponent(image)}` : null;
   const statusClasses = getStatusClasses(status);
   const isList = layout === "list";
+  const displayPrice = useMemo(() => resolveDisplayPrice(product), [product]);
+  const formattedPrice = useMemo(() => {
+    if (!displayPrice) return null;
+    return formatCurrency(displayPrice.amount, displayPrice.currency);
+  }, [displayPrice]);
 
   return (
     <article
@@ -42,9 +49,13 @@ export default function ProductCard({ product, layout = "grid" }) {
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_70%)] opacity-0 transition duration-500 group-hover:opacity-100" />
         {preview ? (
-          <img className="h-full w-full object-cover" src={preview} alt={title} />
+          <div className="absolute inset-0 flex items-center justify-center bg-neutral-950">
+            <img className="max-h-full max-w-full object-contain p-6" src={preview} alt={title} />
+          </div>
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-zinc-500">Pas d’image</div>
+          <div className="absolute inset-0 flex items-center justify-center bg-neutral-950 text-xs text-zinc-500">
+            Pas d’image
+          </div>
         )}
         {status && (
           <span
@@ -59,6 +70,7 @@ export default function ProductCard({ product, layout = "grid" }) {
       <div className={`flex flex-1 flex-col justify-between gap-6 ${isList ? "p-6 sm:p-8" : "p-6"}`}>
         <div className="space-y-3">
           <h3 className="text-lg font-semibold leading-snug text-white">{title}</h3>
+          {formattedPrice && <p className="text-base font-semibold text-white">{formattedPrice}</p>}
           <p className="text-sm text-zinc-400">Sélectionne ce produit pour découvrir ses variantes détaillées.</p>
         </div>
 

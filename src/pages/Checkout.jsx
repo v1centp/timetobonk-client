@@ -182,54 +182,67 @@ export default function Checkout() {
       ) : (
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-4">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="glass-panel flex flex-col gap-5 p-5 sm:flex-row sm:items-center"
-              >
-                {item.image ? (
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="h-32 w-full rounded-2xl object-cover sm:h-24 sm:w-24"
-                  />
-                ) : (
-                  <div className="flex h-32 w-full items-center justify-center rounded-2xl border border-white/10 text-xs text-zinc-500 sm:h-24 sm:w-24">
-                    Pas d'image
-                  </div>
-                )}
+            {items.map((item) => {
+              const productTitle = item.productTitle || item.title;
+              const variantTitle = item.variantTitle && item.variantTitle !== productTitle ? item.variantTitle : null;
+              const displayTitle = item.title || productTitle;
 
-                <div className="flex-1 space-y-3">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <h2 className="text-lg font-semibold text-white">{item.title}</h2>
-                    <span className="text-sm text-zinc-400">
-                      Prix unitaire : {formatCurrency(item.price, item.currency)}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-300">
-                    <label className="flex items-center gap-2 rounded-full border border-white/10 bg-neutral-900/60 px-3 py-2">
-                      <span>Quantité</span>
-                      <input
-                        type="number"
-                        min="1"
-                        max="99"
-                        value={item.quantity}
-                        onChange={(event) => handleQuantityChange(item.id, event.target.value)}
-                        className="w-16 rounded-full border border-transparent bg-transparent text-center text-sm font-semibold text-white focus:outline-none"
+              return (
+                <div
+                  key={item.id}
+                  className="glass-panel flex flex-col gap-5 p-5 sm:flex-row sm:items-center"
+                >
+                  {item.image ? (
+                    <div className="flex h-32 w-full items-center justify-center rounded-2xl bg-neutral-950 sm:h-24 sm:w-24">
+                      <img
+                        src={item.image}
+                        alt={displayTitle}
+                        className="max-h-full max-w-full object-contain p-3"
                       />
-                    </label>
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
-                      onClick={() => removeItem(item.id)}
-                    >
-                      Retirer
-                    </button>
+                    </div>
+                  ) : (
+                    <div className="flex h-32 w-full items-center justify-center rounded-2xl border border-white/10 text-xs text-zinc-500 sm:h-24 sm:w-24">
+                      Pas d'image
+                    </div>
+                  )}
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="space-y-1">
+                        <h2 className="text-lg font-semibold text-white">{productTitle}</h2>
+                        {variantTitle && (
+                          <p className="text-sm text-zinc-400">Variante : {variantTitle}</p>
+                        )}
+                      </div>
+                      <span className="text-sm text-zinc-400">
+                        Prix unitaire : {formatCurrency(item.price, item.currency)}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-300">
+                      <label className="flex items-center gap-2 rounded-full border border-white/10 bg-neutral-900/60 px-3 py-2">
+                        <span>Quantité</span>
+                        <input
+                          type="number"
+                          min="1"
+                          max="99"
+                          value={item.quantity}
+                          onChange={(event) => handleQuantityChange(item.id, event.target.value)}
+                          className="w-16 rounded-full border border-transparent bg-transparent text-center text-sm font-semibold text-white focus:outline-none"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
+                        onClick={() => removeItem(item.id)}
+                      >
+                        Retirer
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <aside className="glass-panel space-y-5 p-6">
