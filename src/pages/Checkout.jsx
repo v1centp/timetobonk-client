@@ -4,7 +4,6 @@ import { useCart } from "../context/CartContext.jsx";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
 
-
 const getStripe = (() => {
   let stripePromise;
   return () => {
@@ -103,7 +102,7 @@ export default function Checkout() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map(i => ({
+          items: items.map((i) => ({
             productUid: i.productUid,
             title: i.title,
             image: i.image,
@@ -113,7 +112,6 @@ export default function Checkout() {
           cancelUrl: `${window.location.origin}/checkout?canceled=true`,
         }),
       });
-
 
       if (!response.ok) {
         const payload = await response.json().catch(() => null);
@@ -145,59 +143,72 @@ export default function Checkout() {
   };
 
   const summaryCurrency = currency?.toUpperCase?.() || "EUR";
+  const hasItems = items.length > 0;
 
   return (
-    <section className="container space-y-6 py-10">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Panier</h1>
-        <p className="text-sm text-zinc-400">Retrouve ici les produits ajoutés à ton panier.</p>
+    <section className="container space-y-10">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500">Checkout</p>
+          <h1 className="text-4xl font-semibold text-white">Panier</h1>
+          <p className="text-sm text-zinc-400">Finalise ta sélection avant de passer au paiement sécurisé.</p>
+        </div>
+        <Link to="/catalog" className="btn-ghost w-full sm:w-auto">
+          Continuer mes achats
+        </Link>
       </div>
 
-      {success && (
-        <div className="rounded-lg border border-neutral-800 bg-neutral-900/70 p-4 text-sm text-zinc-200">
-          Paiement confirmé ! Merci pour ta commande.
-        </div>
-      )}
+      <div className="space-y-4">
+        {success && (
+          <div className="glass-panel border-emerald-400/30 bg-emerald-400/10 p-5 text-sm text-emerald-100">
+            Paiement confirmé ! Merci pour ta commande.
+          </div>
+        )}
 
-      {canceled && !success && (
-        <div className="rounded-lg border border-neutral-800 bg-neutral-900/70 p-4 text-sm text-zinc-200">
-          Le paiement a été annulé. Tu peux réessayer quand tu veux.
-        </div>
-      )}
+        {canceled && !success && (
+          <div className="glass-panel border-amber-300/30 bg-amber-300/10 p-5 text-sm text-amber-100">
+            Le paiement a été annulé. Tu peux réessayer quand tu veux.
+          </div>
+        )}
+      </div>
 
-      {!items.length && !success ? (
-        <div className="space-y-4 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-6 text-sm text-zinc-300">
+      {!hasItems && !success ? (
+        <div className="glass-panel flex flex-col items-start gap-4 p-8 text-sm text-zinc-300">
           <p>Ton panier est vide pour le moment.</p>
-          <Link className="btn btn-primary w-full sm:w-auto" to="/catalog">
+          <Link className="btn-primary" to="/catalog">
             Parcourir le catalogue
           </Link>
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-4">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-col gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 sm:flex-row sm:items-center"
+                className="glass-panel flex flex-col gap-5 p-5 sm:flex-row sm:items-center"
               >
                 {item.image ? (
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="h-32 w-32 rounded-xl object-cover"
+                    className="h-32 w-full rounded-2xl object-cover sm:h-24 sm:w-24"
                   />
                 ) : (
-                  <div className="flex h-32 w-32 items-center justify-center rounded-xl border border-neutral-800 text-xs text-zinc-500">
+                  <div className="flex h-32 w-full items-center justify-center rounded-2xl border border-white/10 text-xs text-zinc-500 sm:h-24 sm:w-24">
                     Pas d'image
                   </div>
                 )}
 
-                <div className="flex-1 space-y-2">
-                  <h2 className="text-lg font-semibold text-white">{item.title}</h2>
-                  <p className="text-sm text-zinc-400">Prix unitaire : {formatCurrency(item.price, item.currency)}</p>
+                <div className="flex-1 space-y-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <h2 className="text-lg font-semibold text-white">{item.title}</h2>
+                    <span className="text-sm text-zinc-400">
+                      Prix unitaire : {formatCurrency(item.price, item.currency)}
+                    </span>
+                  </div>
 
-                  <div className="flex flex-wrap items-center gap-3">
-                    <label className="flex items-center gap-2 text-sm text-zinc-300">
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-300">
+                    <label className="flex items-center gap-2 rounded-full border border-white/10 bg-neutral-900/60 px-3 py-2">
                       <span>Quantité</span>
                       <input
                         type="number"
@@ -205,12 +216,12 @@ export default function Checkout() {
                         max="99"
                         value={item.quantity}
                         onChange={(event) => handleQuantityChange(item.id, event.target.value)}
-                        className="w-16 rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1 text-sm text-white"
+                        className="w-16 rounded-full border border-transparent bg-transparent text-center text-sm font-semibold text-white focus:outline-none"
                       />
                     </label>
                     <button
                       type="button"
-                      className="btn btn-ghost hover:border-neutral-500"
+                      className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
                       onClick={() => removeItem(item.id)}
                     >
                       Retirer
@@ -221,26 +232,31 @@ export default function Checkout() {
             ))}
           </div>
 
-          <aside className="space-y-4 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5">
-            <h2 className="text-xl font-semibold text-white">Résumé</h2>
+          <aside className="glass-panel space-y-5 p-6">
             <div className="space-y-1 text-sm text-zinc-300">
+              <h2 className="text-xl font-semibold text-white">Résumé</h2>
               <p>Articles : {totalQuantity}</p>
               <p>Sous-total : {formatCurrency(subtotal, summaryCurrency)}</p>
+              <p className="text-xs text-zinc-500">Frais de livraison calculés lors du paiement.</p>
             </div>
 
-            {error && <p className="text-sm text-zinc-200">{error}</p>}
+            {error && (
+              <div className="rounded-2xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
+                {error}
+              </div>
+            )}
 
             <button
               type="button"
-              className="btn btn-primary w-full"
+              className="btn-primary w-full"
               onClick={handleCheckout}
-              disabled={!items.length || loading}
+              disabled={!hasItems || loading}
             >
               {loading ? "Redirection en cours…" : "Payer avec Stripe"}
             </button>
 
-            {!items.length && (
-              <Link className="btn btn-ghost w-full hover:border-neutral-500" to="/catalog">
+            {!hasItems && (
+              <Link className="btn-ghost w-full" to="/catalog">
                 Continuer mes achats
               </Link>
             )}
