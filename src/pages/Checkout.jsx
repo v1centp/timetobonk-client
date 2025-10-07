@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
 
 const getStripe = (() => {
   let stripePromise;
   return () => {
     if (stripePromise) return stripePromise;
 
-    const publicKey = import.meta.env.VITE_API_URL;
+    const publicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
     if (!publicKey || typeof window === "undefined") {
       return Promise.resolve(null);
     }
