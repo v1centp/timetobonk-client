@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { API } from "../lib/api.js";
 import { useCart } from "../context/CartContext.jsx";
+import { formatCurrency, resolveDisplayPrice } from "../lib/pricing.js";
 
 const STATUS_TONES = {
   connected: "border-emerald-400/40 bg-emerald-400/10 text-emerald-200",
@@ -12,82 +13,6 @@ function normalizeStatus(status) {
   if (typeof status !== "string") return "default";
   if (/connected|active|available/i.test(status)) return "connected";
   return "default";
-}
-
-function parseAmount(value) {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    const numeric = Number(value.replace(/[^0-9,.-]/g, "").replace(/,(?=[^,]*$)/, "."));
-    if (Number.isFinite(numeric)) {
-      return numeric;
-    }
-  }
-
-  if (value && typeof value === "object") {
-    if (typeof value.amount === "number") return value.amount;
-    if (typeof value.amount === "string") return parseAmount(value.amount);
-    if (typeof value.value === "number") return value.value;
-    if (typeof value.value === "string") return parseAmount(value.value);
-    if (typeof value.min === "number") return value.min;
-    if (typeof value.max === "number") return value.max;
-  }
-
-  return null;
-}
-
-function inferCurrency(source, fallback = "EUR") {
-  if (!source) return fallback;
-  const candidate =
-    source.currency ||
-    source.currencyCode ||
-    source.priceCurrency ||
-    source.price?.currency ||
-    source.price?.currencyCode ||
-    source.price?.currency_symbol ||
-    source.currency_symbol ||
-    fallback;
-
-  if (typeof candidate === "string" && candidate.trim()) {
-    return candidate.trim();
-  }
-
-  return fallback;
-}
-
-function resolvePrice(product, variant) {
-  const candidates = [
-    variant?.price,
-    variant?.retailPrice,
-    variant?.priceAmount,
-    variant?.priceInclTax,
-    variant?.priceExclTax,
-    product?.price,
-    product?.priceAmount,
-    product?.defaultPrice,
-  ];
-
-  for (const candidate of candidates) {
-    const amount = parseAmount(candidate);
-    if (amount !== null) {
-      return { amount, currency: inferCurrency(variant, inferCurrency(product)) };
-    }
-  }
-
-  return null;
-}
-
-function formatCurrency(amount, currency = "EUR") {
-  try {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: currency.toUpperCase(),
-    }).format(amount);
-  } catch (error) {
-    return `${amount.toFixed(2)} ${currency}`;
-  }
 }
 
 export default function ProductDetail() {
@@ -171,22 +96,48 @@ export default function ProductDetail() {
     if (img) setMainImageUrl(img);
   };
 
+  const displayPrice = useMemo(() => {
+    if (!prod) return null;
+    return resolveDisplayPrice(prod, selectedVariant);
+  }, [prod, selectedVariant]);
+
+  const mainImg = imageUrl(mainImageUrl);
+
+  const selectedVariantLabel = useMemo(() => {
+    if (!selectedVariant) return null;
+    return (
+      selectedVariant.title ||
+      selectedVariant.name ||
+      selectedVariant.variantTitle ||
+      selectedVariant.variantName ||
+      selectedVariant.sku ||
+      null
+    );
+  }, [selectedVariant]);
+
   const handleAddToCart = () => {
     if (!prod || !selectedVariant?.productUid) {
       alert("Variante indisponible");
       return;
     }
 
-    const price = resolvePrice(prod, selectedVariant);
+    const currency = (displayPrice?.currency || prod?.currency || "eur").toLowerCase();
+    const variantId = selectedVariant.id || selectedVariant.productUid || selectedVariant.sku || "default";
+    const displayTitle = selectedVariantLabel ? `${prod.title} — ${selectedVariantLabel}` : prod.title;
 
     addItem(
       {
-        id: prod.id,
-        title: `${prod.title}${selectedVariant?.title ? ` — ${selectedVariant.title}` : ""}`,
+        id: `${prod.id}:${variantId}`,
+        productId: prod.id,
+        title: displayTitle,
+        productTitle: prod.title,
+        variantTitle: selectedVariantLabel,
+        variantId,
+        variantSku: selectedVariant.sku || null,
         productUid: selectedVariant.productUid,
-        image: mainImageUrl,
-        price: price?.amount ?? 0,
-        currency: price?.currency ?? prod?.currency ?? "eur",
+        image: mainImg,
+        price: displayPrice?.amount ?? 0,
+        currency,
       },
       quantity
     );
@@ -196,13 +147,9 @@ export default function ProductDetail() {
   };
 
   const formattedPrice = useMemo(() => {
-    if (!prod) return null;
-    const price = resolvePrice(prod, selectedVariant);
-    if (!price) return null;
-    return formatCurrency(price.amount, price.currency);
-  }, [prod, selectedVariant]);
-
-  const mainImg = imageUrl(mainImageUrl);
+    if (!displayPrice) return null;
+    return formatCurrency(displayPrice.amount, displayPrice.currency);
+  }, [displayPrice]);
   const statusTone = STATUS_TONES[normalizeStatus(prod?.status)] ?? STATUS_TONES.default;
 
   if (loading) return <p className="text-sm text-zinc-500">Chargement…</p>;
@@ -283,7 +230,7 @@ export default function ProductDetail() {
                   Variante sélectionnée :
                   <span className="font-medium text-white">
                     {" "}
-                    {selectedVariant?.title || "—"}
+                    {selectedVariantLabel || "—"}
                   </span>
                 </p>
                 {selectedVariant?.sku && (
@@ -316,7 +263,9 @@ export default function ProductDetail() {
                           <div className="flex h-full items-center justify-center text-[10px] text-zinc-500">—</div>
                         )}
                       </div>
-                      <span className="px-3 py-2 text-xs font-medium">{variant.title || "Variante"}</span>
+                      <span className="px-3 py-2 text-xs font-medium">
+                        {variant.title || variant.name || "Variante"}
+                      </span>
                     </button>
                   );
                 })}
