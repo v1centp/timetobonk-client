@@ -6,10 +6,22 @@ import { getProductDisplayPrice } from "../lib/pricing.js";
 const PRICE_FILTERS = [
   { id: "all", label: "Tous les prix", match: () => true },
   { id: "under-30", label: "< 30 CHF", match: (amount) => amount < 30 },
-  { id: "30-60", label: "30 – 60 CHF", match: (amount) => amount >= 30 && amount < 60 },
-  { id: "60-100", label: "60 – 100 CHF", match: (amount) => amount >= 60 && amount < 100 },
-  { id: "over-100", label: "≥ 100 CHF", match: (amount) => amount >= 100 },
 ];
+
+const TYPE_FILTERS = [
+  { id: "all", label: "Tous les produits" },
+  { id: "beanie", label: "Beanies" },
+  { id: "mug", label: "Mugs" },
+];
+
+const ITEMS_PER_PAGE = 12;
+
+function resolveProductType(product) {
+  const text = `${product?.title || ""} ${product?.description || ""}`.toLowerCase();
+  if (text.includes("beanie") || text.includes("bonnet")) return "beanie";
+  if (text.includes("mug") || text.includes("tasse")) return "mug";
+  return "other";
+}
 
 export default function Catalog() {
   const [items, setItems] = useState([]);
@@ -18,10 +30,12 @@ export default function Catalog() {
   const [layout, setLayout] = useState("grid");
   const [priceFilter, setPriceFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     let live = true;
-    fetch(`${API}/api/catalog/featured?currency=CHF`)
+    fetch(`${API}/api/catalog/featured?currency=CHF&limit=60&page=1`)
       .then((r) => r.json())
       .then((json) => {
         if (!live) return;
@@ -50,6 +64,11 @@ export default function Catalog() {
         return false;
       }
 
+       const productType = resolveProductType(item);
+       if (typeFilter !== "all" && productType !== typeFilter) {
+         return false;
+       }
+
       if (normalizedSearch) {
         const textFields = [item.title, item.description, item.status]
           .filter(Boolean)
@@ -66,7 +85,17 @@ export default function Catalog() {
 
       return true;
     });
-  }, [items, priceFilter, searchTerm]);
+  }, [items, priceFilter, searchTerm, typeFilter]);
+
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE)), [filteredItems.length]);
+  const paginatedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredItems, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [priceFilter, typeFilter, searchTerm, items]);
 
   if (loading) {
     return (
@@ -173,6 +202,24 @@ export default function Catalog() {
                 );
               })}
             </div>
+
+            <div className="flex flex-wrap gap-2 rounded-3xl border border-white/10 bg-neutral-900/60 p-2 sm:justify-end">
+              {TYPE_FILTERS.map((option) => {
+                const isActive = typeFilter === option.id;
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setTypeFilter(option.id)}
+                    className={`flex min-w-[120px] items-center justify-center rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition ${
+                      isActive ? "bg-white/15 text-white shadow-soft" : "text-zinc-400 hover:text-white"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -184,6 +231,8 @@ export default function Catalog() {
               onClick={() => {
                 setPriceFilter("all");
                 setSearchTerm("");
+                setTypeFilter("all");
+                setCurrentPage(1);
               }}
               className="inline-flex w-fit items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400 transition hover:text-white"
             >
@@ -199,9 +248,43 @@ export default function Catalog() {
                 : "space-y-4"
             }
           >
-            {filteredItems.map((product) => (
+            {paginatedItems.map((product) => (
               <ProductCard key={product.id} product={product} layout={layout} />
             ))}
+          </div>
+        )}
+
+        {filteredItems.length > ITEMS_PER_PAGE && (
+          <div className="flex flex-col items-center gap-3 pt-4">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-zinc-500">
+              Page {currentPage} / {totalPages}
+            </div>
+            <div className="inline-flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                  currentPage === 1
+                    ? "cursor-not-allowed border-white/5 text-zinc-600"
+                    : "border-white/10 text-zinc-300 hover:border-white/20 hover:text-white"
+                }`}
+              >
+                Précédent
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                  currentPage === totalPages
+                    ? "cursor-not-allowed border-white/5 text-zinc-600"
+                    : "border-white/10 text-zinc-300 hover:border-white/20 hover:text-white"
+                }`}
+              >
+                Suivant
+              </button>
+            </div>
           </div>
         )}
       </div>
