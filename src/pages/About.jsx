@@ -15,13 +15,13 @@ export default function About() {
         <article className="glass-panel space-y-4 p-6">
           <p className="text-base leading-relaxed text-zinc-300">
             On raconte qu’il est né seul, sans jamais avoir connu ses parents. Dans les bois, il a grandi entre curiosité et
-            silence, apprenant à se débrouiller comme il pouvait. Il a trouvé la chaleur ailleurs : dans les rires des animaux
+            silence, apprenant à se débrouiller comme il pouvait. Il a trouvé la chaleur ailleurs&nbsp;: dans les rires des animaux
             qu’il croisait, dans les chemins sans destination, dans le bruit du vent plutôt que celui du monde.
           </p>
           <p className="text-base leading-relaxed text-zinc-300">
-            Un jour, en longeant la mer, il découvrit un vieux bateau échoué. Dans son épave dormaient des objets étranges : des
-            vélos, rouillés mais encore debout. Avec ses amis, il en prit un, juste pour voir jusqu’où on pouvait aller. Ils se
-            mirent à rouler, d’abord pour s’amuser, puis pour chercher — sans trop savoir quoi. Peut-être une famille, peut-être
+            Un jour, en longeant la mer, il découvrit un vieux bateau échoué. Dans son épave dormaient des objets étranges&nbsp;:
+            des vélos, rouillés mais encore debout. Avec ses amis, il en prit un, juste pour voir jusqu’où on pouvait aller. Ils
+            se mirent à rouler, d’abord pour s’amuser, puis pour chercher — sans trop savoir quoi. Peut-être une famille, peut-être
             simplement un sens à tout ça. Et quelque part, ils le trouvèrent, en pédalant.
           </p>
         </article>
@@ -29,11 +29,11 @@ export default function About() {
         <article className="glass-panel space-y-4 p-6">
           <p className="text-base leading-relaxed text-zinc-300">
             Les années passèrent, les routes changèrent, mais la légende resta. Depuis, les réserves du panda se sont nourries de
-            souvenirs de voyage : des bonnets, des bidons, des objets simples qu’il collectionne et partage. Certaines de ces
+            souvenirs de voyage&nbsp;: des bonnets, des bidons, des objets simples qu’il collectionne et partage. Certaines de ces
             trouvailles sont réunies ici, sur ce site — pour ceux qui savent que rouler n’est qu’une partie de l’histoire.
           </p>
           <p className="text-base leading-relaxed text-zinc-300">
-            Chaque pièce porte un peu de cette aventure. Et à ceux qui les emportent, le panda ne demande qu’une chose :
+            Chaque pièce porte un peu de cette aventure. Et à ceux qui les emportent, le panda ne demande qu’une chose&nbsp;:
             <strong> en prendre soin, et continuer la route.</strong>
           </p>
           <div className="flex items-center gap-3 rounded-3xl border border-white/10 bg-neutral-900/60 px-4 py-3 text-sm text-zinc-400">
@@ -43,10 +43,24 @@ export default function About() {
         </article>
       </div>
 
+      <article className="glass-panel space-y-4 p-6">
+        <h3 className="text-lg font-semibold text-white">Et aujourd’hui ?</h3>
+        <p className="text-base leading-relaxed text-zinc-300">
+          Bref, ceci ne raconte pas l’histoire officielle de Panda Cycling… ou peut-être que si. Ce que l’on sait, c’est que
+          derrière la légende se cache un club amateur bien réel, basé autour de Lausanne. On se retrouve pour des group rides
+          ouverts, des cafés, des projets qui font vibrer la scène locale. Les accessoires que tu découvres ici servent à financer
+          tout ça&nbsp;: l’entretien du matériel, les sorties à venir, les prochaines idées folles du collectif.
+        </p>
+        <p className="text-base leading-relaxed text-zinc-300">
+          <strong>En achetant une pièce de la réserve, tu soutiens directement Panda Cycling.</strong> Merci de participer à
+          l’aventure, que ce soit sur la route ou en dehors.
+        </p>
+      </article>
+
       <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-neutral-900/60 p-6 text-sm text-zinc-300 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3 text-zinc-400">
           <span className="inline-flex h-2 w-2 rounded-full bg-white/40" aria-hidden="true" />
-          <span>Envie de rejoindre la réserve ?</span>
+          <span>Envie de rejoindre la réserve&nbsp;?</span>
         </div>
         <Link to="/catalog" className="btn-primary w-full sm:w-auto">
           Explorer le catalogue
