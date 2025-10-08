@@ -67,7 +67,10 @@ export default function Home() {
 
           <div className="relative">
             <div className="absolute inset-0 -z-10 translate-x-10 rounded-[2.5rem] bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent_65%)] blur-3xl" />
-            <article className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-neutral-900/60 shadow-soft">
+            <Link
+              to="/catalog?type=beanie"
+              className="group relative block overflow-hidden rounded-[2.5rem] border border-white/10 bg-neutral-900/60 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-white/20"
+            >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_70%)] opacity-0 transition duration-500 group-hover:opacity-100" />
               <div className="relative overflow-hidden">
                 <img className="h-full w-full object-cover" src={heroImg} alt="Beanies minimalistes" />
@@ -78,16 +81,13 @@ export default function Home() {
                     <span className="inline-flex h-2.5 w-2.5 rounded-full bg-white/60" aria-hidden="true" />
                     <span className="font-medium text-white">Bonnet noir — broderie blanche</span>
                   </div>
-                  <Link
-                    to="/catalog"
-                    className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400 transition hover:text-white"
-                  >
+                  <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400 transition group-hover:text-white">
                     Voir les variantes
                     <span aria-hidden="true">→</span>
-                  </Link>
+                  </span>
                 </div>
               </div>
-            </article>
+            </Link>
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard.jsx";
 import { API } from "../lib/api.js";
 import { getProductDisplayPrice } from "../lib/pricing.js";
@@ -23,14 +24,23 @@ function resolveProductType(product) {
   return "other";
 }
 
+function normalizeType(value) {
+  if (!value) return "all";
+  const lower = String(value).toLowerCase();
+  if (lower === "beanie" || lower === "mug") return lower;
+  return "all";
+}
+
 export default function Catalog() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParamsString = searchParams.toString();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const [layout, setLayout] = useState("grid");
   const [priceFilter, setPriceFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilter, setTypeFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState(() => normalizeType(searchParams.get("type")));
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -52,6 +62,23 @@ export default function Catalog() {
     };
   }, []);
 
+  useEffect(() => {
+    const paramType = normalizeType(new URLSearchParams(searchParamsString).get("type"));
+    setTypeFilter((prev) => (prev === paramType ? prev : paramType));
+  }, [searchParamsString]);
+
+  useEffect(() => {
+    const paramType = normalizeType(new URLSearchParams(searchParamsString).get("type"));
+    if (paramType === typeFilter) return;
+    const next = new URLSearchParams(searchParamsString);
+    if (typeFilter === "all") {
+      next.delete("type");
+    } else {
+      next.set("type", typeFilter);
+    }
+    setSearchParams(next, { replace: true });
+  }, [typeFilter, searchParamsString, setSearchParams]);
+
   const filteredItems = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
     const filterConfig = PRICE_FILTERS.find((option) => option.id === priceFilter) ?? PRICE_FILTERS[0];
@@ -64,10 +91,10 @@ export default function Catalog() {
         return false;
       }
 
-       const productType = resolveProductType(item);
-       if (typeFilter !== "all" && productType !== typeFilter) {
-         return false;
-       }
+      const productType = resolveProductType(item);
+      if (typeFilter !== "all" && productType !== typeFilter) {
+        return false;
+      }
 
       if (normalizedSearch) {
         const textFields = [item.title, item.description, item.status]

@@ -23,13 +23,16 @@ export default function ProductCard({ product, layout = "grid" }) {
   const mediaClasses = isList
     ? "h-32 w-32 flex-shrink-0 overflow-hidden rounded-[1.5rem] sm:h-40 sm:w-40"
     : "h-56 w-full overflow-hidden";
+  const detailHref = `/catalog/${id}`;
 
   return (
     <article
       className={`group relative overflow-hidden rounded-[2rem] border border-white/10 bg-neutral-900/60 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-neutral-900 ${containerClasses}`}
     >
-      <div
+      <Link
+        to={detailHref}
         className={`relative bg-neutral-950 ${mediaClasses}`}
+        aria-label={`Voir ${title}`}
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_70%)] opacity-0 transition duration-500 group-hover:opacity-100" />
         {preview ? (
@@ -56,7 +59,7 @@ export default function ProductCard({ product, layout = "grid" }) {
             Prix indisponible
           </span>
         )}
-      </div>
+      </Link>
 
       <div className={`flex flex-1 flex-col justify-between gap-4 ${isList ? "py-4 pr-4 sm:py-6 sm:pr-6" : "p-6"}`}>
         <div className="space-y-3">
@@ -75,7 +78,7 @@ export default function ProductCard({ product, layout = "grid" }) {
           </div>
           <Link
             className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-white/15"
-            to={`/catalog/${id}`}
+            to={detailHref}
           >
             Voir le détail
             <span

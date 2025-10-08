@@ -260,7 +260,7 @@ export default function Checkout() {
               <h2 className="text-xl font-semibold text-white">Résumé</h2>
               <p>Articles : {totalQuantity}</p>
               <p>Sous-total : {formatCurrency(subtotal, summaryCurrency)}</p>
-              <p className="text-xs text-zinc-500">Frais de livraison calculés lors du paiement.</p>
+              <p className="text-xs text-zinc-500">Frais de livraison inclus dans les montants affichés.</p>
             </div>
 
             {error && (
