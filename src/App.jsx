@@ -5,12 +5,18 @@ import Catalog from "./pages/Catalog.jsx";
 import ProductDetail from "./pages/ProductDetail.jsx";
 import About from "./pages/About.jsx";
 import Checkout from "./pages/Checkout.jsx";
+import Rides from "./pages/Rides.jsx";
+import Events from "./pages/Events.jsx";
+import Kom from "./pages/Kom.jsx";
 
 export default function App() {
   return (
     <Layout>
       <Routes>
         <Route index element={<Home />} />
+        <Route path="/sorties" element={<Rides />} />
+        <Route path="/kom" element={<Kom />} />
+        <Route path="/evenements" element={<Events />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/catalog/:id" element={<ProductDetail />} />
         <Route path="/a-propos" element={<About />} />

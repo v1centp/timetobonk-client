@@ -1,0 +1,162 @@
+/**
+ * Données mock pour les sorties vélo
+ * @type {import('../types').Ride[]}
+ */
+export const ridesData = [
+  {
+    id: "ride-001",
+    title: "Zwift - Pleine balle",
+    category: "course",
+    date: "2025-12-27",
+    time: "18:30",
+    meetingPoint: "Zwift - Watopia",
+    distance: 40,
+    elevation: 500,
+    description: "Sortie intensive sur Zwift. On envoie du watt, chacun son rythme mais ça va vite.",
+  },
+  {
+    id: "ride-002",
+    title: "Zwift - No drop",
+    category: "tranquille",
+    date: "2025-12-27",
+    time: "05:30",
+    meetingPoint: "Zwift - Watopia",
+    distance: 30,
+    elevation: 200,
+    description: "Sortie tranquille du vendredi matin. On roule ensemble, personne n'est lâché.",
+  },
+  {
+    id: "ride-003",
+    title: "Zwift - Pleine balle",
+    category: "course",
+    date: "2026-01-01",
+    time: "18:30",
+    meetingPoint: "Zwift - Watopia",
+    distance: 45,
+    elevation: 600,
+    description: "Première sortie de l'année ! On commence fort.",
+  },
+  {
+    id: "ride-004",
+    title: "Zwift - No drop",
+    category: "tranquille",
+    date: "2026-01-03",
+    time: "05:30",
+    meetingPoint: "Zwift - Watopia",
+    distance: 30,
+    elevation: 200,
+    description: "Sortie tranquille pour bien commencer le weekend. No drop, on roule ensemble.",
+  },
+  {
+    id: "ride-005",
+    title: "Zwift - Pleine balle",
+    category: "course",
+    date: "2026-01-08",
+    time: "18:30",
+    meetingPoint: "Zwift - Watopia",
+    distance: 50,
+    elevation: 700,
+    description: "Sortie intensive du mercredi. Préparez les jambes !",
+  },
+  {
+    id: "ride-006",
+    title: "Zwift - No drop",
+    category: "tranquille",
+    date: "2026-01-10",
+    time: "05:30",
+    meetingPoint: "Zwift - Watopia",
+    distance: 30,
+    elevation: 200,
+    description: "Réveil en douceur, café virtuel inclus.",
+  },
+  {
+    id: "ride-007",
+    title: "Zwift - Pleine balle",
+    category: "course",
+    date: "2026-01-15",
+    time: "18:30",
+    meetingPoint: "Zwift - Watopia",
+    distance: 45,
+    elevation: 550,
+    description: "On continue à construire la forme pour le printemps.",
+  },
+  {
+    id: "ride-008",
+    title: "Zwift - No drop",
+    category: "tranquille",
+    date: "2026-01-17",
+    time: "05:30",
+    meetingPoint: "Zwift - Watopia",
+    distance: 30,
+    elevation: 200,
+    description: "Sortie chill du vendredi. On discute, on pédale.",
+  },
+  {
+    id: "ride-009",
+    title: "Tour des 3 cols",
+    category: "aventure",
+    date: "2026-04-18",
+    time: "08:00",
+    meetingPoint: "Gare de Lausanne",
+    distance: 120,
+    elevation: 2500,
+    description: "Grande sortie de printemps : Col du Pillon, Col des Mosses, Col de la Croix. Journée complète, pique-nique au sommet.",
+    gpxUrl: "/gpx/tour-3-cols.gpx",
+  },
+  {
+    id: "ride-010",
+    title: "Gravel Lavaux",
+    category: "aventure",
+    date: "2026-05-16",
+    time: "08:30",
+    meetingPoint: "Parking de Lutry",
+    distance: 65,
+    elevation: 1200,
+    description: "Exploration des chemins de Lavaux en gravel. Vignobles, forêts, panoramas sur le lac.",
+    gpxUrl: "/gpx/gravel-lavaux.gpx",
+  },
+  {
+    id: "ride-011",
+    title: "Chasseral depuis Bienne",
+    category: "aventure",
+    date: "2026-06-13",
+    time: "07:30",
+    meetingPoint: "Gare de Bienne",
+    distance: 95,
+    elevation: 2000,
+    description: "Ascension mythique du Chasseral par la route du nord. Vue à 360° garantie.",
+    gpxUrl: "/gpx/chasseral.gpx",
+  },
+];
+
+/**
+ * Labels des catégories de sorties
+ * @type {Record<import('../types').RideCategory, string>}
+ */
+export const categoryLabels = {
+  tranquille: "Tranquille",
+  course: "Course",
+  aventure: "Aventure",
+};
+
+/**
+ * Couleurs des catégories (classes Tailwind) - Palette Panda/Bambou
+ * @type {Record<import('../types').RideCategory, { bg: string, text: string, border: string }>}
+ */
+export const categoryColors = {
+  tranquille: {
+    bg: "bg-bamboo-500/20",
+    text: "text-bamboo-400",
+    border: "border-bamboo-500/30",
+  },
+  course: {
+    bg: "bg-panda-100/10",
+    text: "text-panda-100",
+    border: "border-panda-300/30",
+  },
+  aventure: {
+    bg: "bg-bamboo-300/20",
+    text: "text-bamboo-300",
+    border: "border-bamboo-300/30",
+  },
+};

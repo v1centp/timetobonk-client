@@ -16,7 +16,7 @@
   }
 
   body {
-    @apply m-0 min-h-screen bg-neutral-950 text-zinc-100 antialiased;
+    @apply m-0 min-h-screen bg-panda-950 text-panda-100 antialiased;
   }
 
   a {
@@ -36,7 +36,7 @@ textarea {
 }
 
   ::selection {
-    @apply bg-white/20 text-white;
+    @apply bg-bamboo-500/30 text-white;
   }
 
   ::-webkit-scrollbar {
@@ -45,44 +45,44 @@ textarea {
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-neutral-950;
+    @apply bg-panda-950;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-white/10 transition-colors;
+    @apply rounded-full bg-panda-700 transition-colors;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-white/20;
+    @apply bg-panda-600;
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold tracking-tight transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold tracking-tight transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bamboo-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-panda-950 disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 disabled:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-bamboo-600 bg-bamboo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:border-bamboo-500 hover:bg-bamboo-500 hover:shadow-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bamboo-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-panda-950 disabled:translate-y-0;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-neutral-900/70 px-5 py-2.5 text-sm font-semibold text-zinc-200 transition duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 disabled:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-panda-700 bg-panda-800/80 px-5 py-2.5 text-sm font-semibold text-panda-100 transition duration-200 hover:-translate-y-0.5 hover:border-panda-600 hover:bg-panda-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bamboo-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-panda-950 disabled:translate-y-0;
   }
 
   .brand-dot {
-    @apply h-2.5 w-2.5 rounded-full bg-gradient-to-br from-white/80 via-white/50 to-transparent shadow-soft ring-1 ring-white/40;
+    @apply h-2.5 w-2.5 rounded-full bg-gradient-to-br from-bamboo-400 via-bamboo-500 to-bamboo-600 shadow-soft ring-1 ring-bamboo-400/40;
   }
 
   .glass-panel {
-    @apply rounded-3xl border border-white/10 bg-neutral-900/60 shadow-soft backdrop-blur;
+    @apply rounded-3xl border border-panda-700/50 bg-panda-900/80 shadow-soft backdrop-blur;
   }
 }
 
 @layer utilities {
   .grid-overlay {
-    background-image: linear-gradient(transparent 95%, rgba(255, 255, 255, 0.04) 100%),
-      linear-gradient(90deg, transparent 95%, rgba(255, 255, 255, 0.04) 100%);
+    background-image: linear-gradient(transparent 95%, rgba(34, 197, 94, 0.03) 100%),
+      linear-gradient(90deg, transparent 95%, rgba(34, 197, 94, 0.03) 100%);
     background-size: 32px 32px;
   }
 }
