@@ -43,9 +43,15 @@ export default function Kom() {
       )}
 
       {/* KOM actuel */}
-      {!loading && kom && (
+      {!loading && !errorCurrent && (
         <div className="max-w-xl mx-auto mb-12">
-          <KomCard kom={kom} showFullLeaderboard />
+          {kom ? (
+            <KomCard kom={kom} showFullLeaderboard />
+          ) : (
+            <div className="glass-panel p-8 text-center">
+              <p className="text-panda-400">Rien pour l'instant.</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -71,12 +77,16 @@ export default function Kom() {
       </section>
 
       {/* Historique */}
-      {history.length > 0 && (
-        <section>
-          <h2 className="text-xl font-semibold text-white mb-6 text-center">
-            Mois précédents
-          </h2>
+      <section>
+        <h2 className="text-xl font-semibold text-white mb-6 text-center">
+          Mois précédents
+        </h2>
 
+        {history.length === 0 ? (
+          <div className="glass-panel p-8 text-center max-w-2xl mx-auto">
+            <p className="text-panda-400">Rien à montrer pour l'instant.</p>
+          </div>
+        ) : (
           <div className="space-y-4 max-w-2xl mx-auto">
             {history.map((item) => (
               <article
@@ -117,8 +127,8 @@ export default function Kom() {
               </article>
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </section>
     </div>
   );
 }

@@ -19,7 +19,7 @@ export function useCurrentKom() {
       setError(null);
 
       try {
-        const res = await fetch(`${API}/api/kom/current`, {
+        const res = await fetch(`${API}/api/strava/kom/current`, {
           signal: controller.signal,
         });
 

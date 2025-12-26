@@ -54,8 +54,10 @@ function formatMonth(monthStr) {
  * @param {boolean} [props.showFullLeaderboard=false] - Afficher le classement complet
  */
 export default function KomCard({ kom, showFullLeaderboard = false }) {
-  const top3 = kom.leaderboard.slice(0, 3);
-  const rest = showFullLeaderboard ? kom.leaderboard.slice(3) : [];
+  const leaderboard = kom.leaderboard || [];
+  const top3 = leaderboard.slice(0, 3);
+  const rest = showFullLeaderboard ? leaderboard.slice(3) : [];
+  const hasLeaderboard = leaderboard.length > 0;
 
   return (
     <article className="glass-panel p-6">
@@ -74,28 +76,37 @@ export default function KomCard({ kom, showFullLeaderboard = false }) {
         </a>
         <div className="flex items-center justify-center gap-4 mt-2 text-xs text-panda-500">
           <span>{(kom.segmentDistance / 1000).toFixed(1)} km</span>
-          <span>{kom.segmentElevation} m D+</span>
+          <span>{Math.round(kom.segmentElevation)} m D+</span>
         </div>
       </header>
 
-      <Podium entries={top3} />
+      {hasLeaderboard ? (
+        <>
+          <Podium entries={top3} />
 
-      {rest.length > 0 && (
-        <div className="border-t border-panda-700/30 pt-4 mt-4">
-          <ul className="space-y-2">
-            {rest.map((entry) => (
-              <li
-                key={entry.rank}
-                className="flex items-center justify-between text-sm"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-6 text-panda-500 text-right">{entry.rank}.</span>
-                  <span className="text-panda-200">{entry.athleteName}</span>
-                </div>
-                <span className="text-panda-400">{entry.time}</span>
-              </li>
-            ))}
-          </ul>
+          {rest.length > 0 && (
+            <div className="border-t border-panda-700/30 pt-4 mt-4">
+              <ul className="space-y-2">
+                {rest.map((entry) => (
+                  <li
+                    key={entry.rank}
+                    className="flex items-center justify-between text-sm"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="w-6 text-panda-500 text-right">{entry.rank}.</span>
+                      <span className="text-panda-200">{entry.athleteName}</span>
+                    </div>
+                    <span className="text-panda-400">{entry.time}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="text-center py-4 text-panda-400">
+          <p>Pas encore de temps enregistré.</p>
+          <p className="text-sm mt-1">Soyez le premier !</p>
         </div>
       )}
 
