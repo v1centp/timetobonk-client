@@ -3,6 +3,33 @@ import { useParams, Link } from "react-router-dom";
 import { API } from "../lib/api.js";
 import { useCart } from "../context/CartContext.jsx";
 import { formatCurrency, inferCurrency, parseAmount } from "../lib/pricing.js";
+import capImage from "../assets/cap.png";
+import mugImage from "../assets/mug.png";
+import beanieImage from "../assets/new_beanie.png";
+import pompomImage from "../assets/pompom_new.png";
+import socksImage from "../assets/socks.png";
+
+// Images locales pour certains produits
+const LOCAL_IMAGES = {
+  "Vintage Cap| Black": capImage,
+  "Mug Inox | Bamboo Vibes": mugImage,
+  "Cuffed Beanie | Black": beanieImage,
+  "Pom Pom Beanie | Black": pompomImage,
+};
+
+// Images locales par marqueur LOCAL:
+const LOCAL_IMAGE_FILES = {
+  "socks.png": socksImage,
+};
+
+function resolveLocalImage(imageUrl) {
+  if (!imageUrl || typeof imageUrl !== "string") return null;
+  if (imageUrl.startsWith("LOCAL:")) {
+    const filename = imageUrl.replace("LOCAL:", "");
+    return LOCAL_IMAGE_FILES[filename] || null;
+  }
+  return null;
+}
 
 function normalizePrice(source, fallbackCurrency = "EUR") {
   if (source == null) return null;
@@ -281,6 +308,7 @@ export default function ProductDetail() {
   }, [prod, productUid, quantity, fallbackCurrency]);
 
   const imageUrl = (url) => (url ? `${API}/api/proxy/image?url=${encodeURIComponent(url)}` : null);
+  const localImage = prod?.title ? (LOCAL_IMAGES[prod.title] || resolveLocalImage(prod.image)) : resolveLocalImage(prod?.image);
 
   const handleQuantityChange = (event) => {
     const n = Number(event.target.value);
@@ -300,7 +328,7 @@ export default function ProductDetail() {
     setSelectedVariant(variant);
   };
 
-  const mainImg = imageUrl(mainImageUrl);
+  const mainImg = localImage || resolveLocalImage(mainImageUrl) || (mainImageUrl && !mainImageUrl.startsWith("LOCAL:") ? imageUrl(mainImageUrl) : null);
 
   const selectedVariantLabel = useMemo(() => {
     if (!selectedVariant) return null;
@@ -357,9 +385,32 @@ export default function ProductDetail() {
     return formatCurrency(priceInfo.total, priceInfo.currency);
   }, [priceInfo]);
 
-  if (loading) return <p className="text-sm text-zinc-500">Chargement…</p>;
-  if (err) return <p className="text-sm text-zinc-500">Erreur : {err}</p>;
-  if (!prod) return <p className="text-sm text-zinc-500">Produit introuvable.</p>;
+  if (loading) {
+    return (
+      <section className="container py-20">
+        <div className="glass-panel flex items-center justify-between p-6 text-sm text-zinc-300">
+          <span>Chargement du produit…</span>
+          <span className="h-2 w-2 animate-pulse rounded-full bg-white/60" aria-hidden="true" />
+        </div>
+      </section>
+    );
+  }
+
+  if (err) {
+    return (
+      <section className="container py-20">
+        <div className="glass-panel p-6 text-sm text-zinc-300">Erreur : {err}</div>
+      </section>
+    );
+  }
+
+  if (!prod) {
+    return (
+      <section className="container py-20">
+        <div className="glass-panel p-6 text-sm text-zinc-300">Produit introuvable.</div>
+      </section>
+    );
+  }
 
   return (
     <section className="container space-y-10">

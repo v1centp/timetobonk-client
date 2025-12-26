@@ -1,40 +1,6 @@
-/**
- * Affiche le podium (top 3)
- * @param {Object} props
- * @param {import('../../types').KomEntry[]} props.entries - Les 3 premiers
- */
-function Podium({ entries }) {
-  const podiumOrder = [1, 0, 2]; // 2e, 1er, 3e (affichage classique podium)
-  const heights = ["h-16", "h-20", "h-12"];
-  const colors = [
-    "bg-gradient-to-t from-zinc-400 to-zinc-300", // Argent
-    "bg-gradient-to-t from-amber-500 to-yellow-400", // Or
-    "bg-gradient-to-t from-amber-700 to-amber-600", // Bronze
-  ];
-
-  return (
-    <div className="flex items-end justify-center gap-2 mb-6">
-      {podiumOrder.map((index, position) => {
-        const entry = entries[index];
-        if (!entry) return null;
-
-        return (
-          <div key={entry.rank} className="flex flex-col items-center gap-2">
-            <div className="text-center">
-              <p className="text-sm font-semibold text-white">{entry.athleteName}</p>
-              <p className="text-xs text-panda-400">{entry.time}</p>
-            </div>
-            <div
-              className={`${heights[position]} w-16 ${colors[position]} rounded-t-lg flex items-center justify-center`}
-            >
-              <span className="text-lg font-bold text-neutral-900">{entry.rank}</span>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import { ShareSegmentModal } from "../share";
 
 /**
  * Formate le mois en français
@@ -51,75 +17,67 @@ function formatMonth(monthStr) {
  * Carte pour afficher le KOM du mois
  * @param {Object} props
  * @param {import('../../types').KomMonthly} props.kom - Données du KOM
- * @param {boolean} [props.showFullLeaderboard=false] - Afficher le classement complet
  */
-export default function KomCard({ kom, showFullLeaderboard = false }) {
-  const leaderboard = kom.leaderboard || [];
-  const top3 = leaderboard.slice(0, 3);
-  const rest = showFullLeaderboard ? leaderboard.slice(3) : [];
-  const hasLeaderboard = leaderboard.length > 0;
+export default function KomCard({ kom }) {
+  const [showShare, setShowShare] = useState(false);
 
   return (
     <article className="glass-panel p-6">
-      <header className="text-center mb-6">
+      <header className="text-center">
         <p className="text-sm text-panda-400 uppercase tracking-wider mb-1">
-          KOM du mois
+          Segment du mois
         </p>
         <h3 className="text-xl font-bold text-white mb-2">{formatMonth(kom.month)}</h3>
         <a
           href={kom.segmentUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-bamboo-400 hover:text-bamboo-300 transition"
+          className="text-lg text-bamboo-400 hover:text-bamboo-300 transition font-medium"
         >
           {kom.segmentName}
         </a>
-        <div className="flex items-center justify-center gap-4 mt-2 text-xs text-panda-500">
+        <div className="flex items-center justify-center gap-4 mt-3 text-sm text-panda-400">
           <span>{(kom.segmentDistance / 1000).toFixed(1)} km</span>
+          <span>•</span>
           <span>{Math.round(kom.segmentElevation)} m D+</span>
+          {kom.averageGrade && (
+            <>
+              <span>•</span>
+              <span>{kom.averageGrade.toFixed(1)}%</span>
+            </>
+          )}
         </div>
+        {kom.city && (
+          <p className="text-xs text-panda-500 mt-2">{kom.city}</p>
+        )}
       </header>
 
-      {hasLeaderboard ? (
-        <>
-          <Podium entries={top3} />
-
-          {rest.length > 0 && (
-            <div className="border-t border-panda-700/30 pt-4 mt-4">
-              <ul className="space-y-2">
-                {rest.map((entry) => (
-                  <li
-                    key={entry.rank}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="w-6 text-panda-500 text-right">{entry.rank}.</span>
-                      <span className="text-panda-200">{entry.athleteName}</span>
-                    </div>
-                    <span className="text-panda-400">{entry.time}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="text-center py-4 text-panda-400">
-          <p>Pas encore de temps enregistré.</p>
-          <p className="text-sm mt-1">Soyez le premier !</p>
-        </div>
-      )}
-
-      <footer className="mt-6 text-center">
+      <footer className="mt-6 flex items-center justify-center gap-3">
         <a
           href={kom.segmentUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn btn-ghost text-sm"
+          className="btn-primary"
         >
           Voir sur Strava
         </a>
+        <button
+          onClick={() => setShowShare(true)}
+          className="btn-ghost"
+          title="Partager"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          Partager
+        </button>
       </footer>
+
+      {/* Modal de partage */}
+      {showShare && createPortal(
+        <ShareSegmentModal segment={kom} onClose={() => setShowShare(false)} />,
+        document.body
+      )}
     </article>
   );
 }

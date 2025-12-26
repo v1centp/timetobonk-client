@@ -3,6 +3,21 @@ import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
 import { formatCurrency } from "../lib/pricing.js";
 import { API } from "../lib/api.js";
+import socksImage from "../assets/socks.png";
+
+// Images locales par marqueur LOCAL:
+const LOCAL_IMAGE_FILES = {
+  "socks.png": socksImage,
+};
+
+function resolveLocalImage(imageUrl) {
+  if (!imageUrl || typeof imageUrl !== "string") return null;
+  if (imageUrl.startsWith("LOCAL:")) {
+    const filename = imageUrl.replace("LOCAL:", "");
+    return LOCAL_IMAGE_FILES[filename] || null;
+  }
+  return null;
+}
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
 
@@ -64,6 +79,7 @@ const getStripe = (() => {
 
 function toProxyImage(url) {
   if (!url || typeof url !== "string") return null;
+  if (url.startsWith("LOCAL:")) return null; // Géré par resolveLocalImage
   if (url.includes("/api/proxy/image")) return url;
   if (!API) return url;
   return `${API}/api/proxy/image?url=${encodeURIComponent(url)}`;
@@ -73,6 +89,10 @@ export default function Checkout() {
   const { items, subtotal, totalQuantity, currency, removeItem, updateQuantity, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [promoCode, setPromoCode] = useState("");
+  const [promoStatus, setPromoStatus] = useState(null); // null | "valid" | "invalid"
+  const [promoDiscount, setPromoDiscount] = useState(null);
+  const [promoLoading, setPromoLoading] = useState(false);
   const location = useLocation();
   const query = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const success = query.get("success");
@@ -83,6 +103,35 @@ export default function Checkout() {
       clearCart();
     }
   }, [success, clearCart]);
+
+  const validatePromo = async () => {
+    if (!promoCode.trim()) return;
+
+    setPromoLoading(true);
+    setPromoStatus(null);
+    setPromoDiscount(null);
+
+    try {
+      const response = await fetch(`${API_BASE}/api/payments/validate-promo`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoCode }),
+      });
+
+      const data = await response.json();
+
+      if (data.valid) {
+        setPromoStatus("valid");
+        setPromoDiscount(data.discount);
+      } else {
+        setPromoStatus("invalid");
+      }
+    } catch {
+      setPromoStatus("invalid");
+    } finally {
+      setPromoLoading(false);
+    }
+  };
 
   const handleCheckout = async () => {
     if (!items.length) return;
@@ -110,6 +159,7 @@ export default function Checkout() {
             currency: i.currency,
           })),
           currency: "CHF",
+          promoCode: promoStatus === "valid" ? promoCode : undefined,
           successUrl: `${window.location.origin}/checkout?success=true`,
           cancelUrl: `${window.location.origin}/checkout?canceled=true`,
         }),
@@ -121,6 +171,12 @@ export default function Checkout() {
       }
 
       const data = await response.json();
+
+      // Si commande gratuite avec code promo
+      if (data.free && data.url) {
+        window.location.href = data.url;
+        return;
+      }
 
       if (data.url) {
         window.location.href = data.url;
@@ -188,7 +244,8 @@ export default function Checkout() {
               const productTitle = item.productTitle || item.title;
               const variantTitle = item.variantTitle && item.variantTitle !== productTitle ? item.variantTitle : null;
               const displayTitle = item.title || productTitle;
-              const itemImage = item.image || toProxyImage(item.imageOriginal || item.originalImage);
+              const localImg = resolveLocalImage(item.image);
+              const itemImage = localImg || (item.image && !item.image.startsWith("LOCAL:") ? item.image : null) || toProxyImage(item.imageOriginal || item.originalImage);
               const unitPrice = Number.isFinite(item.price) ? item.price : 0;
               const lineTotal = Number((unitPrice * item.quantity).toFixed(2));
               const unitPriceLabel = formatCurrency(unitPrice, item.currency);
@@ -260,7 +317,42 @@ export default function Checkout() {
               <h2 className="text-xl font-semibold text-white">Résumé</h2>
               <p>Articles : {totalQuantity}</p>
               <p>Sous-total : {formatCurrency(subtotal, summaryCurrency)}</p>
+              {promoStatus === "valid" && promoDiscount?.value === 100 && (
+                <p className="font-semibold text-emerald-400">Réduction : -100% (GRATUIT)</p>
+              )}
               <p className="text-xs text-zinc-500">Frais de livraison inclus dans les montants affichés.</p>
+            </div>
+
+            {/* Code promo */}
+            <div className="space-y-2">
+              <label className="text-sm text-zinc-300">Code promo</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={(e) => {
+                    setPromoCode(e.target.value.toUpperCase());
+                    setPromoStatus(null);
+                    setPromoDiscount(null);
+                  }}
+                  placeholder="Entrer un code"
+                  className="flex-1 rounded-full border border-white/10 bg-neutral-900/60 px-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={validatePromo}
+                  disabled={!promoCode.trim() || promoLoading}
+                  className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10 disabled:opacity-50"
+                >
+                  {promoLoading ? "..." : "Appliquer"}
+                </button>
+              </div>
+              {promoStatus === "valid" && (
+                <p className="text-sm text-emerald-400">Code promo valide !</p>
+              )}
+              {promoStatus === "invalid" && (
+                <p className="text-sm text-red-400">Code promo invalide</p>
+              )}
             </div>
 
             {error && (
@@ -275,7 +367,7 @@ export default function Checkout() {
               onClick={handleCheckout}
               disabled={!hasItems || loading}
             >
-              {loading ? "Redirection en cours…" : "Payer avec Stripe"}
+              {loading ? "Redirection en cours…" : promoStatus === "valid" && promoDiscount?.value === 100 ? "Confirmer (gratuit)" : "Payer avec Stripe"}
             </button>
 
             {!hasItems && (
