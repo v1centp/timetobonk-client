@@ -69,7 +69,7 @@ export default function Layout({ children }) {
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(34,197,94,0.15),transparent)]" />
       <div className="pointer-events-none absolute inset-0 -z-10 grid-overlay opacity-50" />
 
-      <header className="sticky top-0 z-40 border-b border-panda-800/50 bg-panda-950/90 backdrop-blur-lg">
+      <header className="sticky top-0 z-40 border-b border-panda-800/50 bg-panda-950 md:bg-panda-950/90 md:backdrop-blur-lg">
         <div className="container flex items-center justify-between gap-4 py-4">
           <Link
             to="/"
