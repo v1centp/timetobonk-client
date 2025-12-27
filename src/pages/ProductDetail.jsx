@@ -332,7 +332,9 @@ export default function ProductDetail() {
     setSelectedVariant(variant);
   };
 
-  const mainImg = localImage || resolveLocalImage(mainImageUrl) || (mainImageUrl && !mainImageUrl.startsWith("LOCAL:") ? imageUrl(mainImageUrl) : null);
+  // Priorité : image sélectionnée (mainImageUrl) > image locale par titre > proxy URL
+  const resolvedMainImage = resolveLocalImage(mainImageUrl);
+  const mainImg = resolvedMainImage || localImage || (mainImageUrl && !mainImageUrl.startsWith("LOCAL:") ? imageUrl(mainImageUrl) : null);
 
   const selectedVariantLabel = useMemo(() => {
     if (!selectedVariant) return null;
@@ -428,15 +430,37 @@ export default function ProductDetail() {
       </div>
 
       <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-neutral-900/60 shadow-soft">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_70%)] opacity-0 transition duration-500 group-hover:opacity-100" />
             {mainImg ? (
               <img src={mainImg} alt={prod.title} className="h-[420px] w-full bg-neutral-950 object-contain" />
             ) : (
-              <div className="flex h-[420px] items-center justify-center text-sm text-zinc-500">Pas d’image</div>
+              <div className="flex h-[420px] items-center justify-center text-sm text-zinc-500">Pas d'image</div>
             )}
           </div>
+
+          {/* Galerie de miniatures pour produits avec plusieurs images */}
+          {Array.isArray(prod?.productImages) && prod.productImages.length > 1 && (
+            <div className="flex gap-3">
+              {prod.productImages.map((img, idx) => {
+                const imgUrl = resolveLocalImage(img.fileUrl) || imageUrl(img.fileUrl);
+                const isActive = mainImageUrl === img.fileUrl || (!mainImageUrl && idx === 0);
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setMainImageUrl(img.fileUrl)}
+                    className={`h-20 w-20 overflow-hidden rounded-xl border-2 transition ${
+                      isActive ? "border-white" : "border-white/10 hover:border-white/30"
+                    }`}
+                  >
+                    <img src={imgUrl} alt={`${prod.title} ${idx + 1}`} className="h-full w-full object-cover" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         <div className="space-y-8 lg:pl-6">
@@ -464,13 +488,13 @@ export default function ProductDetail() {
             <div className="space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-sm text-zinc-300">
-                  Variante sélectionnée :
+                  {prod?.isManual ? "Taille :" : "Variante sélectionnée :"}
                   <span className="font-medium text-white">
                     {" "}
                     {selectedVariantLabel || "—"}
                   </span>
                 </p>
-                {selectedVariant?.sku && (
+                {selectedVariant?.sku && !prod?.isManual && (
                   <span className="rounded-full border border-white/10 bg-neutral-900/60 px-3 py-1 text-xs text-zinc-400">
                     SKU : {selectedVariant.sku}
                   </span>
@@ -484,6 +508,26 @@ export default function ProductDetail() {
                   const active =
                     (!!selectedVariant?.id && selectedVariant.id === variant.id) ||
                     (!!selectedVariant?.productUid && selectedVariant.productUid === variant.productUid);
+                  const isManualProduct = prod?.isManual === true;
+
+                  // Affichage simplifié (texte seul) pour les produits manuels
+                  if (isManualProduct) {
+                    return (
+                      <button
+                        key={variant.id || variant.productUid}
+                        type="button"
+                        onClick={() => handlePickVariant(variant)}
+                        className={`rounded-full border px-4 py-2 text-sm font-medium transition ${active
+                          ? "border-white/40 bg-white/10 text-white shadow-soft"
+                          : "border-white/10 bg-neutral-900/60 text-zinc-300 hover:border-white/25"
+                          }`}
+                      >
+                        {variant.title || variant.name || "Variante"}
+                      </button>
+                    );
+                  }
+
+                  // Affichage avec image pour les produits Gelato
                   return (
                     <button
                       key={variant.id || variant.productUid}

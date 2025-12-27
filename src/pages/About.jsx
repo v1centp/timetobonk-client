@@ -18,30 +18,27 @@ export default function About() {
           </div>
           <div className="space-y-5 text-panda-300 leading-relaxed">
             <p>
-              On raconte qu'il est né seul, sans jamais avoir connu ses parents.
-              Dans les forêts, il a grandi entre curiosité et silence, apprenant à se débrouiller comme il pouvait.
-              Il a trouvé la chaleur ailleurs : dans les rires des animaux qu'il croisait,
-              dans les chemins sans destination, dans le bruit du vent plutôt que celui du monde.
+              Il y a fort longtemps, dit-on, un petit panda serait tombé par hasard sur un hangar abandonné.
+              À l'intérieur, des vélos oubliés, couverts de poussière, mais encore pleins de promesses.
+              Il en aurait choisi un, sans vraiment savoir pourquoi.
+              Et ce jour-là, quelque chose aurait commencé.
             </p>
             <p>
-              Un jour, en longeant un lac, il découvrit un vieux hangar abandonné.
-              À l'intérieur dormaient des objets étranges : des vélos, rouillés mais encore debout.
-              Avec ses amis, il en prit un, juste pour voir jusqu'où on pouvait aller.
-              Ils se mirent à rouler, d'abord pour s'amuser, puis pour chercher — sans trop savoir quoi.
-              Peut-être une famille, peut-être simplement un sens à tout ça.
-              Et quelque part entre les cols et les descentes, ils le trouvèrent.
+              Très vite, d'autres l'auraient rejoint.
+              Des amis, attirés par la route, le mouvement, l'envie d'aller voir plus loin.
+              Ensemble, ils auraient roulé sans plan, traversé des vallées, gravi des cols,
+              parcouru le monde entier — juste pour le plaisir d'avancer… ou pour un KOM.
             </p>
             <p>
-              Les années passèrent, les routes changèrent, mais la légende resta.
-              Depuis, les réserves du panda se sont nourries de souvenirs de voyage :
-              des maillots, des bidons, des objets simples qu'il collectionne et partage.
-              Certaines de ces trouvailles sont réunies ici — pour ceux qui savent
-              que rouler n'est qu'une partie de l'histoire.
+              Est-ce que tout ça est vrai ?
+              Personne ne peut vraiment le dire.
+              Peut-être que c'est une histoire qu'on se raconte.
+              Peut-être qu'elle a grandi avec le temps.
             </p>
             <p className="text-white font-medium italic border-l-2 border-bamboo-500 pl-4">
-              Chaque pièce porte un peu de cette aventure.
-              Et à ceux qui les emportent, le panda ne demande qu'une chose :
-              en prendre soin, et continuer la route.
+              Mais une chose est sûre : la légende continue de rouler.
+              Et aujourd'hui encore, le Panda Cycling Club avance, fidèle à cet esprit —
+              libre, infatigable, et souvent pleine balle.
             </p>
           </div>
         </article>
