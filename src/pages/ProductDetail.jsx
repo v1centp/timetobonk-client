@@ -24,6 +24,7 @@ const LOCAL_IMAGE_FILES = {
   "socks.png": socksImage,
   "maillot.png": maillotImage,
   "maillot2.png": maillot2Image,
+  "mug.png": mugImage,
 };
 
 function resolveLocalImage(imageUrl) {
