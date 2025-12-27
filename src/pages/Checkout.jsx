@@ -341,8 +341,10 @@ export default function Checkout() {
               <h2 className="text-xl font-semibold text-white">Résumé</h2>
               <p>Articles : {totalQuantity}</p>
               <p>Sous-total : {formatCurrency(subtotal, summaryCurrency)}</p>
-              {promoStatus === "valid" && promoDiscount?.value === 100 && (
-                <p className="font-semibold text-emerald-400">Réduction : -100% (GRATUIT)</p>
+              {promoStatus === "valid" && promoDiscount?.value > 0 && (
+                <p className="font-semibold text-emerald-400">
+                  Réduction : -{promoDiscount.value}%{promoDiscount.value === 100 ? " (GRATUIT)" : ""}
+                </p>
               )}
               <p className="text-xs text-zinc-500">Frais de livraison inclus dans les montants affichés.</p>
             </div>
