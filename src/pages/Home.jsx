@@ -118,15 +118,7 @@ export default function Home() {
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-panda-700 border-t-white" />
               </div>
             ) : kom ? (
-              <>
-                <KomCard kom={kom} />
-                <Link
-                  to="/kom"
-                  className="mt-4 block text-center text-sm text-panda-400 hover:text-bamboo-400 transition"
-                >
-                  Voir les détails →
-                </Link>
-              </>
+              <KomCard kom={kom} detailsLink="/kom" />
             ) : (
               <div className="glass-panel p-8 text-center">
                 <p className="text-panda-400">Pas de segment ce mois-ci.</p>

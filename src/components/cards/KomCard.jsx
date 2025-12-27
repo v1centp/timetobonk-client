@@ -17,8 +17,9 @@ function formatMonth(monthStr) {
  * Carte pour afficher le KOM du mois
  * @param {Object} props
  * @param {import('../../types').KomMonthly} props.kom - Données du KOM
+ * @param {string} [props.detailsLink] - Si défini, affiche "Voir les détails" au lieu de "Voir sur Strava"
  */
-export default function KomCard({ kom }) {
+export default function KomCard({ kom, detailsLink }) {
   const [showShare, setShowShare] = useState(false);
 
   return (
@@ -53,14 +54,20 @@ export default function KomCard({ kom }) {
       </header>
 
       <footer className="mt-6 flex items-center justify-center gap-3">
-        <a
-          href={kom.segmentUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary"
-        >
-          Voir sur Strava
-        </a>
+        {detailsLink ? (
+          <a href={detailsLink} className="btn-primary">
+            Voir les détails
+          </a>
+        ) : (
+          <a
+            href={kom.segmentUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary"
+          >
+            Voir sur Strava
+          </a>
+        )}
         <button
           onClick={() => setShowShare(true)}
           className="btn-ghost"
