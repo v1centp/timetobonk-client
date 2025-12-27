@@ -17,7 +17,7 @@ const BOTTOM_NAV_ITEMS = [
   { to: "/", label: "Accueil", end: true, icon: "home" },
   { to: "/sorties", label: "Sorties", icon: "bike" },
   { to: "/catalog", label: "Shop", icon: "shop" },
-  { to: "/checkout", label: "Panier", icon: "cart" },
+  { to: null, label: "Menu", icon: "menu", isMenuButton: true },
 ];
 
 const NavIcon = ({ icon, className = "w-5 h-5" }) => {
@@ -45,6 +45,12 @@ const NavIcon = ({ icon, className = "w-5 h-5" }) => {
       return (
         <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      );
+    case "menu":
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
         </svg>
       );
     default:
@@ -340,11 +346,26 @@ export default function Layout({ children }) {
       <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-panda-700/50 bg-panda-900/95 backdrop-blur-lg md:hidden safe-area-bottom">
         <div className="grid grid-cols-4">
           {BOTTOM_NAV_ITEMS.map((item) => {
+            // Bouton menu
+            if (item.isMenuButton) {
+              return (
+                <button
+                  key="menu"
+                  type="button"
+                  onClick={() => setMobileOpen(true)}
+                  className="flex flex-col items-center gap-1 py-3 text-panda-400 transition-colors active:text-panda-200"
+                >
+                  <NavIcon icon={item.icon} className="w-6 h-6" />
+                  <span className="text-[10px] font-medium">{item.label}</span>
+                </button>
+              );
+            }
+
+            // Liens de navigation
             const isActive = item.end
               ? location.pathname === item.to
               : location.pathname.startsWith(item.to) && item.to !== "/";
-            const isCartActive = item.to === "/checkout" && location.pathname === "/checkout";
-            const active = item.to === "/" ? location.pathname === "/" : isCartActive || isActive;
+            const active = item.to === "/" ? location.pathname === "/" : isActive;
 
             return (
               <NavLink
@@ -357,14 +378,7 @@ export default function Layout({ children }) {
                     : "text-panda-400 active:text-panda-200"
                 }`}
               >
-                <span className="relative">
-                  <NavIcon icon={item.icon} className={`w-6 h-6 ${active ? "stroke-[2]" : ""}`} />
-                  {item.icon === "cart" && totalQuantity > 0 && (
-                    <span className="absolute -right-2 -top-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-bamboo-500 px-1 text-[10px] font-bold text-white">
-                      {totalQuantity}
-                    </span>
-                  )}
-                </span>
+                <NavIcon icon={item.icon} className={`w-6 h-6 ${active ? "stroke-[2]" : ""}`} />
                 <span className={`text-[10px] font-medium ${active ? "font-semibold" : ""}`}>
                   {item.label}
                 </span>
