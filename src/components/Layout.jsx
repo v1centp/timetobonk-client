@@ -96,7 +96,10 @@ export default function Layout({ children }) {
     };
   }, [mobileOpen]);
 
-  const closeMobile = () => setMobileOpen(false);
+  const closeMobile = () => {
+    setMobileOpen(false);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
 
   const closeMobileWithAnimation = () => {
     setIsClosing(true);
