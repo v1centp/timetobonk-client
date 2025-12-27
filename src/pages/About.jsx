@@ -37,7 +37,7 @@ export default function About() {
             </p>
             <p className="text-white font-medium italic border-l-2 border-bamboo-500 pl-4">
               Mais une chose est sûre : la légende continue de rouler.
-              Et aujourd'hui encore, le Panda Cycling Club avance, fidèle à cet esprit —
+              Et aujourd'hui encore, la Panda Cycling avance, fidèle à cet esprit —
               libre, infatigable, et souvent pleine balle.
             </p>
           </div>
