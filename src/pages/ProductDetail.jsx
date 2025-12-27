@@ -8,6 +8,8 @@ import mugImage from "../assets/mug.png";
 import beanieImage from "../assets/new_beanie.png";
 import pompomImage from "../assets/pompom_new.png";
 import socksImage from "../assets/socks.png";
+import maillotImage from "../assets/maillot.png";
+import maillot2Image from "../assets/maillot2.png";
 
 // Images locales pour certains produits
 const LOCAL_IMAGES = {
@@ -20,6 +22,8 @@ const LOCAL_IMAGES = {
 // Images locales par marqueur LOCAL:
 const LOCAL_IMAGE_FILES = {
   "socks.png": socksImage,
+  "maillot.png": maillotImage,
+  "maillot2.png": maillot2Image,
 };
 
 function resolveLocalImage(imageUrl) {

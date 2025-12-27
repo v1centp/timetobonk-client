@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { to: "/kom", label: "KOM" },
   { to: "/evenements", label: "Événements" },
   { to: "/catalog", label: "Shop" },
+  { to: "/a-propos", label: "À propos" },
 ];
 
 const SOCIAL_LINKS = [
@@ -69,7 +70,7 @@ export default function Layout({ children }) {
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(34,197,94,0.15),transparent)]" />
       <div className="pointer-events-none absolute inset-0 -z-10 grid-overlay opacity-50" />
 
-      <header className="sticky top-0 z-40 border-b border-panda-800/50 bg-panda-950 md:bg-panda-950/90 md:backdrop-blur-lg">
+      <header className="sticky top-0 z-40 border-b border-panda-800/50 bg-panda-950">
         <div className="container flex items-center justify-between gap-4 py-4">
           <Link
             to="/"
@@ -156,7 +157,7 @@ export default function Layout({ children }) {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex">
           <div className="flex-1 bg-panda-950/80 backdrop-blur-sm" onClick={closeMobile} aria-hidden="true" />
-          <aside className="flex w-72 flex-col gap-6 border-l border-panda-700/50 bg-panda-900/98 p-6 shadow-soft transition-transform duration-200 ease-out">
+          <aside className="flex w-72 flex-col gap-6 border-l border-panda-700/50 bg-panda-900 p-6 shadow-soft transition-transform duration-200 ease-out">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-white">Navigation</span>
               <button
