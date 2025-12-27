@@ -85,4 +85,9 @@ textarea {
       linear-gradient(90deg, transparent 95%, rgba(34, 197, 94, 0.03) 100%);
     background-size: 32px 32px;
   }
+
+  /* Support pour les safe areas iPhone */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
