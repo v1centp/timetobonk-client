@@ -264,6 +264,18 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!prod || !productUid) return;
 
+    // Si le prix est un override fixe, calculer le total localement
+    if (prod.price?.isOverride) {
+      setPriceInfo({
+        amount: prod.price.amount,
+        currency: prod.price.currency || fallbackCurrency,
+        quantity,
+        total: prod.price.amount * quantity,
+      });
+      setPriceLoading(false);
+      return;
+    }
+
     let cancelled = false;
     const controller = new AbortController();
 
