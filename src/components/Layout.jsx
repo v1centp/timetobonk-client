@@ -367,11 +367,19 @@ export default function Layout({ children }) {
               : location.pathname.startsWith(item.to) && item.to !== "/";
             const active = item.to === "/" ? location.pathname === "/" : isActive;
 
+            const handleClick = (e) => {
+              if (active) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            };
+
             return (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
+                onClick={handleClick}
                 className={`flex flex-col items-center gap-1 py-3 transition-colors ${
                   active
                     ? "text-bamboo-400"
@@ -447,8 +455,8 @@ export default function Layout({ children }) {
               </div>
             </div>
 
-            {/* Navigation */}
-            <div>
+            {/* Navigation - caché sur mobile */}
+            <div className="hidden md:block">
               <h4 className="text-sm font-semibold text-white mb-4">Navigation</h4>
               <ul className="space-y-2 text-sm text-panda-400">
                 <li><Link to="/sorties" className="hover:text-bamboo-400 transition">Sorties</Link></li>
@@ -458,8 +466,8 @@ export default function Layout({ children }) {
               </ul>
             </div>
 
-            {/* Contact */}
-            <div>
+            {/* Contact - caché sur mobile */}
+            <div className="hidden md:block">
               <h4 className="text-sm font-semibold text-white mb-4">Contact</h4>
               <ul className="space-y-2 text-sm text-panda-400">
                 <li>

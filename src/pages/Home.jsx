@@ -101,9 +101,16 @@ export default function Home() {
                 <h2 className="text-xl font-bold text-white mb-1">Segment du mois</h2>
                 <p className="text-sm text-panda-400">Le défi du moment</p>
               </div>
-              <Link to="/kom" className="text-sm text-panda-400 hover:text-bamboo-400 transition">
-                Voir
-              </Link>
+              {kom && (
+                <a
+                  href={kom.segmentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-panda-400 hover:text-bamboo-400 transition"
+                >
+                  Strava →
+                </a>
+              )}
             </header>
 
             {loadingKom ? (
@@ -111,7 +118,15 @@ export default function Home() {
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-panda-700 border-t-white" />
               </div>
             ) : kom ? (
-              <KomCard kom={kom} />
+              <>
+                <KomCard kom={kom} />
+                <Link
+                  to="/kom"
+                  className="mt-4 block text-center text-sm text-panda-400 hover:text-bamboo-400 transition"
+                >
+                  Voir les détails →
+                </Link>
+              </>
             ) : (
               <div className="glass-panel p-8 text-center">
                 <p className="text-panda-400">Pas de segment ce mois-ci.</p>

@@ -41,6 +41,14 @@ export default function Kom() {
         </div>
       )}
 
+      {/* Leaderboard du mois précédent */}
+      <section className="max-w-2xl mx-auto mb-12">
+        <h2 className="text-xl font-semibold text-white mb-4 text-center">Résultats du mois précédent</h2>
+        <div className="glass-panel p-8 text-center">
+          <p className="text-panda-400">Rien pour l'instant.</p>
+        </div>
+      </section>
+
       {/* Explication */}
       <section className="glass-panel p-6 max-w-2xl mx-auto">
         <h2 className="text-lg font-semibold text-white mb-3">Comment participer ?</h2>
