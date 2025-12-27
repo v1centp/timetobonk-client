@@ -141,16 +141,32 @@ export default function Layout({ children }) {
             </div>
           </nav>
 
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-panda-700/50 bg-panda-800/80 text-panda-200 transition hover:border-panda-600 hover:text-white md:hidden"
-            onClick={() => setMobileOpen(true)}
-            aria-label="Ouvrir le menu de navigation"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="transition">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 7h16M4 12h16M4 17h16" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <Link
+              to="/checkout"
+              className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-panda-700/50 bg-panda-800/80 text-panda-200 transition hover:border-panda-600 hover:text-white"
+              aria-label="Panier"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              {totalQuantity > 0 && (
+                <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-bamboo-500 px-1 text-xs font-bold text-white">
+                  {totalQuantity}
+                </span>
+              )}
+            </Link>
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-panda-700/50 bg-panda-800/80 text-panda-200 transition hover:border-panda-600 hover:text-white"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Ouvrir le menu de navigation"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="transition">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
 
