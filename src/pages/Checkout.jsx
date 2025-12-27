@@ -243,7 +243,8 @@ export default function Checkout() {
       <div className="space-y-4">
         {success && (
           <div className="glass-panel border-emerald-400/30 bg-emerald-400/10 p-5 text-sm text-emerald-100">
-            Paiement confirmé ! Merci pour ta commande.
+            <p>Paiement confirmé ! Merci pour ta commande.</p>
+            <p className="mt-2 text-emerald-200/80">Un email de confirmation t'a été envoyé.</p>
           </div>
         )}
 
