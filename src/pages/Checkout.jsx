@@ -385,51 +385,71 @@ export default function Checkout() {
                 <p className="text-sm font-medium text-emerald-400">Adresse de livraison</p>
                 <input
                   type="text"
+                  name="name"
+                  autoComplete="name"
                   placeholder="Nom complet *"
                   value={shipping.name}
-                  onChange={(e) => setShipping({ ...shipping, name: e.target.value })}
+                  onChange={(e) => setShipping((s) => ({ ...s, name: e.target.value }))}
+                  onBlur={(e) => setShipping((s) => ({ ...s, name: e.target.value }))}
                   className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
                 />
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   placeholder="Email *"
                   value={shipping.email}
-                  onChange={(e) => setShipping({ ...shipping, email: e.target.value })}
+                  onChange={(e) => setShipping((s) => ({ ...s, email: e.target.value }))}
+                  onBlur={(e) => setShipping((s) => ({ ...s, email: e.target.value }))}
                   className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
                 />
                 <input
                   type="tel"
+                  name="phone"
+                  autoComplete="tel"
                   placeholder="Téléphone"
                   value={shipping.phone}
-                  onChange={(e) => setShipping({ ...shipping, phone: e.target.value })}
+                  onChange={(e) => setShipping((s) => ({ ...s, phone: e.target.value }))}
+                  onBlur={(e) => setShipping((s) => ({ ...s, phone: e.target.value }))}
                   className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
                 />
                 <input
                   type="text"
+                  name="address"
+                  autoComplete="street-address"
                   placeholder="Adresse *"
                   value={shipping.address}
-                  onChange={(e) => setShipping({ ...shipping, address: e.target.value })}
+                  onChange={(e) => setShipping((s) => ({ ...s, address: e.target.value }))}
+                  onBlur={(e) => setShipping((s) => ({ ...s, address: e.target.value }))}
                   className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
                 />
                 <div className="flex gap-2">
                   <input
                     type="text"
+                    name="postalCode"
+                    autoComplete="postal-code"
                     placeholder="NPA *"
                     value={shipping.postalCode}
-                    onChange={(e) => setShipping({ ...shipping, postalCode: e.target.value })}
+                    onChange={(e) => setShipping((s) => ({ ...s, postalCode: e.target.value }))}
+                    onBlur={(e) => setShipping((s) => ({ ...s, postalCode: e.target.value }))}
                     className="w-24 rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
                   />
                   <input
                     type="text"
+                    name="city"
+                    autoComplete="address-level2"
                     placeholder="Ville *"
                     value={shipping.city}
-                    onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
+                    onChange={(e) => setShipping((s) => ({ ...s, city: e.target.value }))}
+                    onBlur={(e) => setShipping((s) => ({ ...s, city: e.target.value }))}
                     className="flex-1 rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
                   />
                 </div>
                 <select
+                  name="country"
+                  autoComplete="country"
                   value={shipping.country}
-                  onChange={(e) => setShipping({ ...shipping, country: e.target.value })}
+                  onChange={(e) => setShipping((s) => ({ ...s, country: e.target.value }))}
                   className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-white/20 focus:outline-none"
                 >
                   <option value="CH">Suisse</option>
