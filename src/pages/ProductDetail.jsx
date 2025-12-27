@@ -440,6 +440,27 @@ export default function ProductDetail() {
             )}
           </div>
 
+          {/* Galerie de miniatures pour produits locaux/manuels avec plusieurs images */}
+          {prod?.isManual && Array.isArray(prod?.productImages) && prod.productImages.length > 1 && (
+            <div className="flex gap-3">
+              {prod.productImages.map((img, idx) => {
+                const imgUrl = resolveLocalImage(img.fileUrl) || imageUrl(img.fileUrl);
+                const isActive = mainImageUrl === img.fileUrl || (!mainImageUrl && idx === 0);
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setMainImageUrl(img.fileUrl)}
+                    className={`h-20 w-20 overflow-hidden rounded-xl border-2 transition ${
+                      isActive ? "border-white" : "border-white/10 hover:border-white/30"
+                    }`}
+                  >
+                    <img src={imgUrl} alt={`${prod.title} ${idx + 1}`} className="h-full w-full object-cover" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         <div className="space-y-8 lg:pl-6">
