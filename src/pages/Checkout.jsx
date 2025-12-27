@@ -262,7 +262,7 @@ export default function Checkout() {
           </Link>
         </div>
       ) : (
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="grid gap-8 pb-24 lg:grid-cols-[1.2fr_0.8fr] lg:pb-0">
           <div className="space-y-4">
             {items.map((item) => {
               const productTitle = item.productTitle || item.title;
@@ -485,6 +485,31 @@ export default function Checkout() {
               </Link>
             )}
           </aside>
+        </div>
+      )}
+
+      {/* Barre sticky mobile */}
+      {hasItems && !success && (
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-panda-900/95 p-4 backdrop-blur-lg lg:hidden">
+          <div className="flex items-center justify-between gap-4">
+            <div className="text-sm">
+              <p className="text-zinc-400">{totalQuantity} article{totalQuantity > 1 ? "s" : ""}</p>
+              <p className="text-lg font-semibold text-white">
+                {formatCurrency(subtotal, summaryCurrency)}
+                {promoStatus === "valid" && promoDiscount?.value > 0 && (
+                  <span className="ml-2 text-sm font-normal text-emerald-400">-{promoDiscount.value}%</span>
+                )}
+              </p>
+            </div>
+            <button
+              type="button"
+              className="btn-primary px-6"
+              onClick={handleCheckout}
+              disabled={!hasItems || loading}
+            >
+              {loading ? "..." : isFreeOrder ? "Confirmer" : "Payer"}
+            </button>
+          </div>
         </div>
       )}
     </section>
