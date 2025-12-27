@@ -97,6 +97,15 @@ export default function Checkout() {
   const [promoStatus, setPromoStatus] = useState(null); // null | "valid" | "invalid"
   const [promoDiscount, setPromoDiscount] = useState(null);
   const [promoLoading, setPromoLoading] = useState(false);
+  const [shipping, setShipping] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "CH",
+  });
   const location = useLocation();
   const query = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const success = query.get("success");
@@ -137,15 +146,25 @@ export default function Checkout() {
     }
   };
 
+  const isFreeOrder = promoStatus === "valid" && promoDiscount?.value === 100;
+
   const handleCheckout = async () => {
     if (!items.length) return;
+
+    // Validation pour commande gratuite
+    if (isFreeOrder) {
+      if (!shipping.name || !shipping.email || !shipping.address || !shipping.city || !shipping.postalCode) {
+        setError("Merci de remplir tous les champs de livraison.");
+        return;
+      }
+    }
 
     setLoading(true);
     setError("");
 
     try {
       const stripe = await getStripe();
-      if (!stripe) {
+      if (!stripe && !isFreeOrder) {
         throw new Error("La clé publique Stripe n'est pas configurée.");
       }
 
@@ -164,6 +183,7 @@ export default function Checkout() {
           })),
           currency: "CHF",
           promoCode: promoStatus === "valid" ? promoCode : undefined,
+          shipping: isFreeOrder ? shipping : undefined,
           successUrl: `${window.location.origin}/checkout?success=true`,
           cancelUrl: `${window.location.origin}/checkout?canceled=true`,
         }),
@@ -358,6 +378,69 @@ export default function Checkout() {
                 <p className="text-sm text-red-400">Code promo invalide</p>
               )}
             </div>
+
+            {/* Formulaire livraison pour commande gratuite */}
+            {isFreeOrder && (
+              <div className="space-y-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4">
+                <p className="text-sm font-medium text-emerald-400">Adresse de livraison</p>
+                <input
+                  type="text"
+                  placeholder="Nom complet *"
+                  value={shipping.name}
+                  onChange={(e) => setShipping({ ...shipping, name: e.target.value })}
+                  className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
+                />
+                <input
+                  type="email"
+                  placeholder="Email *"
+                  value={shipping.email}
+                  onChange={(e) => setShipping({ ...shipping, email: e.target.value })}
+                  className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
+                />
+                <input
+                  type="tel"
+                  placeholder="Téléphone"
+                  value={shipping.phone}
+                  onChange={(e) => setShipping({ ...shipping, phone: e.target.value })}
+                  className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
+                />
+                <input
+                  type="text"
+                  placeholder="Adresse *"
+                  value={shipping.address}
+                  onChange={(e) => setShipping({ ...shipping, address: e.target.value })}
+                  className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
+                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="NPA *"
+                    value={shipping.postalCode}
+                    onChange={(e) => setShipping({ ...shipping, postalCode: e.target.value })}
+                    className="w-24 rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Ville *"
+                    value={shipping.city}
+                    onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
+                    className="flex-1 rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
+                  />
+                </div>
+                <select
+                  value={shipping.country}
+                  onChange={(e) => setShipping({ ...shipping, country: e.target.value })}
+                  className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-white/20 focus:outline-none"
+                >
+                  <option value="CH">Suisse</option>
+                  <option value="FR">France</option>
+                  <option value="DE">Allemagne</option>
+                  <option value="AT">Autriche</option>
+                  <option value="IT">Italie</option>
+                  <option value="BE">Belgique</option>
+                </select>
+              </div>
+            )}
 
             {error && (
               <div className="rounded-2xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
