@@ -12,7 +12,7 @@ import Kom from "./pages/Kom.jsx";
 import Countdown from "./pages/Countdown.jsx";
 
 // Mode lancement : mettre à true pour activer le countdown pour tous
-const LAUNCH_MODE = false;
+const LAUNCH_MODE = true;
 const ACCESS_KEY = "panda2026";
 
 function useAccess() {
