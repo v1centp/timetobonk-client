@@ -213,7 +213,7 @@ export default function Countdown() {
 
             {/* Target date */}
             <p className="mb-8 text-panda-400">
-              1er Janvier 2026 a 00:00
+              1er Janvier 2026 à 00:00
             </p>
           </>
         )}
