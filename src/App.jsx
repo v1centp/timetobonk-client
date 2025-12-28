@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Routes, Route, useSearchParams } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 import Home from "./pages/Home.jsx";
 import Catalog from "./pages/Catalog.jsx";
@@ -10,7 +11,42 @@ import Events from "./pages/Events.jsx";
 import Kom from "./pages/Kom.jsx";
 import Countdown from "./pages/Countdown.jsx";
 
+// Mode lancement : mettre à true pour activer le countdown pour tous
+const LAUNCH_MODE = false;
+const ACCESS_KEY = "panda2026";
+
+function useAccess() {
+  const [searchParams] = useSearchParams();
+  const [hasAccess, setHasAccess] = useState(() => {
+    if (!LAUNCH_MODE) return true;
+    return localStorage.getItem("panda_access") === "granted";
+  });
+
+  useEffect(() => {
+    if (!LAUNCH_MODE) return;
+
+    const accessParam = searchParams.get("access");
+    if (accessParam === ACCESS_KEY) {
+      localStorage.setItem("panda_access", "granted");
+      setHasAccess(true);
+    }
+  }, [searchParams]);
+
+  return hasAccess;
+}
+
 export default function App() {
+  const hasAccess = useAccess();
+
+  // Si mode lancement actif et pas d'accès, afficher countdown
+  if (LAUNCH_MODE && !hasAccess) {
+    return (
+      <div className="min-h-screen bg-panda-950">
+        <Countdown />
+      </div>
+    );
+  }
+
   return (
     <Layout>
       <Routes>
