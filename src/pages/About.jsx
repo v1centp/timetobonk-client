@@ -53,7 +53,7 @@ export default function About() {
               <strong className="text-white">Mercredi soir</strong> — Course "pleine balle" sur Zwift l'hiver, sur route dès la belle saison
             </li>
             <li>
-              <strong className="text-white">Vendredi 5h30</strong> — Sortie tranquille sur Zwift, no drop (on ne lâche personne)
+              <strong className="text-white">Vendredi 5h30</strong> — Sortie tranquille sur Zwift
             </li>
             <li>
               <strong className="text-white">Weekends</strong> — Sorties aventure (cols, tours hors Lausanne) annoncées ~1 mois à l'avance
