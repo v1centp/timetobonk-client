@@ -356,9 +356,14 @@ export default function Layout({ children }) {
                   key="menu"
                   type="button"
                   onClick={() => setMobileOpen(true)}
-                  className="flex flex-col items-center gap-1 py-3 text-panda-400 transition-colors active:text-panda-200"
+                  className="relative flex flex-col items-center gap-1 py-3 text-panda-400 transition-colors active:text-panda-200"
                 >
-                  <NavIcon icon={item.icon} className="w-6 h-6" />
+                  <div className="relative">
+                    <NavIcon icon={item.icon} className="w-6 h-6" />
+                    {totalQuantity > 0 && (
+                      <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-bamboo-500 ring-2 ring-panda-900" />
+                    )}
+                  </div>
                   <span className="text-[10px] font-medium">{item.label}</span>
                 </button>
               );
