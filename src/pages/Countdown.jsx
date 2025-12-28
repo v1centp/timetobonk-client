@@ -148,7 +148,7 @@ export default function Countdown() {
     // Bottom tagline
     ctx.fillStyle = "#52525b";
     ctx.font = "28px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("La legende continue de rouler", 540, 1750);
+    ctx.fillText("La légende continue de rouler", 540, 1750);
 
     // Download the image
     const link = document.createElement("a");
