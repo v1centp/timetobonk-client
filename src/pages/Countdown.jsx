@@ -244,7 +244,7 @@ export default function Countdown() {
         </button>
 
         <p className="mt-4 text-sm text-panda-500">
-          Telecharge une image optimisee pour Instagram Story
+          Télécharge une image optimisée pour Instagram Story
         </p>
 
         {/* Hidden canvas for image generation */}
