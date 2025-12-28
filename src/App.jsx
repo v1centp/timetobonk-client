@@ -25,6 +25,14 @@ function useAccess() {
   useEffect(() => {
     if (!LAUNCH_MODE) return;
 
+    // Reset access with ?reset
+    if (searchParams.has("reset")) {
+      localStorage.removeItem("panda_access");
+      setHasAccess(false);
+      return;
+    }
+
+    // Grant access with ?access=panda2026
     const accessParam = searchParams.get("access");
     if (accessParam === ACCESS_KEY) {
       localStorage.setItem("panda_access", "granted");
