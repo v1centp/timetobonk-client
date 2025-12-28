@@ -48,7 +48,7 @@ export default function Rides() {
             <div>
               <h3 className="font-medium text-white">Vendredi 5h30</h3>
               <p className="text-sm text-panda-400">
-                Sortie <strong className="text-bamboo-400">tranquille</strong> sur Zwift. Si écart dans les montées, on s'attend en haut.
+                Sortie <strong className="text-bamboo-400">tranquille</strong> sur Zwift.
               </p>
             </div>
           </div>
