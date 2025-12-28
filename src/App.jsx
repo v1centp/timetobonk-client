@@ -8,6 +8,7 @@ import Checkout from "./pages/Checkout.jsx";
 import Rides from "./pages/Rides.jsx";
 import Events from "./pages/Events.jsx";
 import Kom from "./pages/Kom.jsx";
+import Countdown from "./pages/Countdown.jsx";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/catalog/:id" element={<ProductDetail />} />
         <Route path="/a-propos" element={<About />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/countdown" element={<Countdown />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </Layout>
