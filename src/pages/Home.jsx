@@ -49,11 +49,11 @@ export default function Home() {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="h-64 w-64 sm:h-80 sm:w-80 rounded-full bg-bamboo-500/10 blur-3xl" />
             </div>
-            <div className="relative mx-auto lg:mx-0 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96">
+            <div className="relative mx-auto lg:mx-0 w-64 h-[16rem] sm:w-80 sm:h-[20rem] lg:w-96 lg:h-[24rem]">
               <img
                 src={logoHero}
                 alt="Panda Cycling"
-                className="w-full h-full object-cover rounded-3xl shadow-2xl border border-panda-700/30"
+                className="w-full h-full object-cover rounded-3xl shadow-2xl border border-panda-700/30 object-[center_65%]"
                 style={{ filter: "drop-shadow(0 0 40px rgba(34, 197, 94, 0.1))" }}
               />
             </div>
