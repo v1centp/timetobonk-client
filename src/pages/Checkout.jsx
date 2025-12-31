@@ -477,7 +477,7 @@ export default function Checkout() {
               onClick={handleCheckout}
               disabled={!hasItems || loading}
             >
-              {loading ? "Redirection en cours…" : promoStatus === "valid" && promoDiscount?.value === 100 ? "Confirmer (gratuit)" : "Payer avec Stripe"}
+              {loading ? "Redirection en cours…" : promoStatus === "valid" && promoDiscount?.value === 100 ? "Confirmer (gratuit)" : "Payer (TWINT, Visa, etc.)"}
             </button>
 
             {!hasItems && (
@@ -508,7 +508,7 @@ export default function Checkout() {
               onClick={handleCheckout}
               disabled={!hasItems || loading}
             >
-              {loading ? "..." : isFreeOrder ? "Confirmer" : "Payer"}
+              {loading ? "..." : isFreeOrder ? "Confirmer" : "Payer (TWINT, Visa...)"}
             </button>
           </div>
         </div>
