@@ -148,7 +148,7 @@ export default function Checkout() {
 
   const isFreeOrder = promoStatus === "valid" && promoDiscount?.value === 100;
 
-  const handleCheckout = async (paymentMethod = null) => {
+  const handleCheckout = async () => {
     if (!items.length) return;
 
     // Validation pour commande gratuite
@@ -184,7 +184,6 @@ export default function Checkout() {
           currency: "CHF",
           promoCode: promoStatus === "valid" ? promoCode : undefined,
           shipping: isFreeOrder ? shipping : undefined,
-          paymentMethod: paymentMethod,
           successUrl: `${window.location.origin}/checkout?success=true`,
           cancelUrl: `${window.location.origin}/checkout?canceled=true`,
         }),
@@ -472,35 +471,14 @@ export default function Checkout() {
               </div>
             )}
 
-            {isFreeOrder ? (
-              <button
-                type="button"
-                className="btn-primary w-full"
-                onClick={() => handleCheckout()}
-                disabled={!hasItems || loading}
-              >
-                {loading ? "Redirection en cours…" : "Confirmer (gratuit)"}
-              </button>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <button
-                  type="button"
-                  className="btn-primary w-full"
-                  onClick={() => handleCheckout("card")}
-                  disabled={!hasItems || loading}
-                >
-                  {loading ? "Redirection…" : "Payer par carte"}
-                </button>
-                <button
-                  type="button"
-                  className="w-full rounded-full border border-white/10 bg-[#00A3E0] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0090c7] disabled:opacity-50"
-                  onClick={() => handleCheckout("twint")}
-                  disabled={!hasItems || loading}
-                >
-                  {loading ? "Redirection…" : "Payer avec TWINT"}
-                </button>
-              </div>
-            )}
+            <button
+              type="button"
+              className="btn-primary w-full"
+              onClick={handleCheckout}
+              disabled={!hasItems || loading}
+            >
+              {loading ? "Redirection en cours…" : promoStatus === "valid" && promoDiscount?.value === 100 ? "Confirmer (gratuit)" : "Payer avec Stripe"}
+            </button>
 
             {!hasItems && (
               <Link className="btn-ghost w-full" to="/catalog">
@@ -524,35 +502,14 @@ export default function Checkout() {
                 )}
               </p>
             </div>
-            {isFreeOrder ? (
-              <button
-                type="button"
-                className="btn-primary px-6"
-                onClick={() => handleCheckout()}
-                disabled={!hasItems || loading}
-              >
-                {loading ? "..." : "Confirmer"}
-              </button>
-            ) : (
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  className="btn-primary px-4"
-                  onClick={() => handleCheckout("card")}
-                  disabled={!hasItems || loading}
-                >
-                  {loading ? "..." : "Carte"}
-                </button>
-                <button
-                  type="button"
-                  className="rounded-full bg-[#00A3E0] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-                  onClick={() => handleCheckout("twint")}
-                  disabled={!hasItems || loading}
-                >
-                  {loading ? "..." : "TWINT"}
-                </button>
-              </div>
-            )}
+            <button
+              type="button"
+              className="btn-primary px-6"
+              onClick={handleCheckout}
+              disabled={!hasItems || loading}
+            >
+              {loading ? "..." : isFreeOrder ? "Confirmer" : "Payer"}
+            </button>
           </div>
         </div>
       )}
