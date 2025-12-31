@@ -13,7 +13,7 @@ import Countdown from "./pages/Countdown.jsx";
 import Resume from "./pages/Resume.jsx";
 
 // Mode lancement : mettre à true pour activer le countdown pour tous
-const LAUNCH_MODE = true;
+const LAUNCH_MODE = false;
 const ACCESS_KEY = "panda2026";
 
 function useAccess() {
