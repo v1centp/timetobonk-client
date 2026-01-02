@@ -95,12 +95,18 @@ function withProxy(url) {
       return url;
     }
   } catch {
-    // non absolute URLs -> let’s just return as-is
+    // non absolute URLs -> let's just return as-is
     return url;
   }
 
   if (!API) return url;
-  return `${API}/api/proxy/image?url=${encodeURIComponent(url)}`;
+  // Décoder d'abord pour éviter le double encodage des URLs S3 signées
+  try {
+    const decoded = decodeURIComponent(url);
+    return `${API}/api/proxy/image?url=${encodeURIComponent(decoded)}`;
+  } catch {
+    return `${API}/api/proxy/image?url=${encodeURIComponent(url)}`;
+  }
 }
 
 function extractOriginalFromProxy(url) {

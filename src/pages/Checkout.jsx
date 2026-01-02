@@ -86,7 +86,13 @@ function toProxyImage(url) {
   if (url.startsWith("LOCAL:")) return null; // Géré par resolveLocalImage
   if (url.includes("/api/proxy/image")) return url;
   if (!API) return url;
-  return `${API}/api/proxy/image?url=${encodeURIComponent(url)}`;
+  // Décoder d'abord pour éviter le double encodage des URLs S3 signées
+  try {
+    const decoded = decodeURIComponent(url);
+    return `${API}/api/proxy/image?url=${encodeURIComponent(decoded)}`;
+  } catch {
+    return `${API}/api/proxy/image?url=${encodeURIComponent(url)}`;
+  }
 }
 
 export default function Checkout() {

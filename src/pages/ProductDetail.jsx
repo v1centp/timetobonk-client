@@ -324,7 +324,16 @@ export default function ProductDetail() {
     };
   }, [prod, productUid, quantity, fallbackCurrency]);
 
-  const imageUrl = (url) => (url ? `${API}/api/proxy/image?url=${encodeURIComponent(url)}` : null);
+  const imageUrl = (url) => {
+    if (!url) return null;
+    // Décoder d'abord pour éviter le double encodage des URLs S3 signées
+    try {
+      const decoded = decodeURIComponent(url);
+      return `${API}/api/proxy/image?url=${encodeURIComponent(decoded)}`;
+    } catch {
+      return `${API}/api/proxy/image?url=${encodeURIComponent(url)}`;
+    }
+  };
   const localImage = prod?.title ? (LOCAL_IMAGES[prod.title] || resolveLocalImage(prod.image)) : resolveLocalImage(prod?.image);
 
   const handleQuantityChange = (event) => {
