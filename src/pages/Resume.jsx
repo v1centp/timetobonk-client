@@ -142,13 +142,13 @@ export default function Resume() {
       komName,
     ], "#f59e0b");
 
-    // Events section (story only)
-    if (isStory) {
-      drawSection("ÉVÉNEMENTS", [
-        "Grillades prévues cet été !",
-        "Sorties aventure annoncées à l'avance",
-      ], "#3b82f6");
-    }
+    // Events section
+    drawSection("ÉVÉNEMENTS", isStory ? [
+      "Grillades prévues cet été !",
+      "Sorties aventure annoncées à l'avance",
+    ] : [
+      "Grillades, sorties aventure...",
+    ], "#3b82f6");
 
     // Shop section
     drawSection("SHOP", isStory ? [
@@ -159,7 +159,7 @@ export default function Resume() {
       "Maillot, chaussettes & goodies",
     ], "#ec4899");
 
-    // Links section (story only - full version)
+    // Links section
     if (isStory) {
       currentY += 20;
       ctx.fillStyle = "#22c55e";
@@ -213,6 +213,11 @@ export default function Resume() {
       });
 
       currentY += 150;
+    } else {
+      // Compact links for post format
+      drawSection("NOUS REJOINDRE", [
+        "@panda_cycling • Strava • WhatsApp",
+      ], "#22c55e");
     }
 
     // Website
