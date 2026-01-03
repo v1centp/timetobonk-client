@@ -416,9 +416,12 @@ export default function ProductDetail() {
   if (loading) {
     return (
       <section className="container py-20">
-        <div className="glass-panel flex items-center justify-between p-6 text-sm text-zinc-300">
-          <span>Chargement du produit…</span>
-          <span className="h-2 w-2 animate-pulse rounded-full bg-white/60" aria-hidden="true" />
+        <div className="flex flex-col items-center justify-center gap-6">
+          <div className="relative">
+            <div className="h-16 w-16 animate-spin rounded-full border-4 border-white/10 border-t-bamboo-500" />
+            <span className="absolute inset-0 flex items-center justify-center text-2xl">🐼</span>
+          </div>
+          <p className="text-sm text-zinc-400 animate-pulse">Chargement du produit…</p>
         </div>
       </section>
     );
