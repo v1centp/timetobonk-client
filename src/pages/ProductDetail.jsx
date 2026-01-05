@@ -14,7 +14,7 @@ import pandaLogo from "../assets/panda logo.png";
 
 // Images locales pour certains produits
 const LOCAL_IMAGES = {
-  "Vintage Cap| Black": capImage,
+  "Vintage Cap | Black": capImage,
   "Mug Inox | Bamboo Vibes": mugImage,
   "Cuffed Beanie | Black": beanieImage,
   "Pom Pom Beanie | Black": pompomImage,
@@ -629,9 +629,8 @@ export default function ProductDetail() {
                     key={idx}
                     type="button"
                     onClick={() => setMainImageUrl(img.fileUrl)}
-                    className={`h-20 w-20 overflow-hidden rounded-xl border-2 transition ${
-                      isActive ? "border-white" : "border-white/10 hover:border-white/30"
-                    }`}
+                    className={`h-20 w-20 overflow-hidden rounded-xl border-2 transition ${isActive ? "border-white" : "border-white/10 hover:border-white/30"
+                      }`}
                   >
                     <img src={imgUrl} alt={`${prod.title} ${idx + 1}`} className="h-full w-full object-cover" />
                   </button>

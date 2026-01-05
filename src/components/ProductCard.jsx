@@ -12,7 +12,7 @@ import maillot2Image from "../assets/maillot2.png";
 
 // Images locales pour certains produits (par titre ou par ID)
 const LOCAL_IMAGES = {
-  "Vintage Cap| Black": capImage,
+  "Vintage Cap | Black": capImage,
   "Mug Inox | Bamboo Vibes": mugImage,
   "Cuffed Beanie | Black": beanieImage,
   "Pom Pom Beanie | Black": pompomImage,
