@@ -14,7 +14,7 @@ import pandaLogo from "../assets/panda logo.png";
 
 // Images locales pour certains produits
 const LOCAL_IMAGES = {
-  "Vintage Cap| Black": capImage,
+  "Vintage Cap | Black": capImage,
   "Mug Inox | Bamboo Vibes": mugImage,
   "Cuffed Beanie | Black": beanieImage,
   "Pom Pom Beanie | Black": pompomImage,
