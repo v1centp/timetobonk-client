@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { API } from "../lib/api.js";
 import { useCart } from "../context/CartContext.jsx";
@@ -10,6 +10,7 @@ import pompomImage from "../assets/pompom_new.png";
 import socksImage from "../assets/socks.png";
 import maillotImage from "../assets/maillot.png";
 import maillot2Image from "../assets/maillot2.png";
+import pandaLogo from "../assets/panda logo.png";
 
 // Images locales pour certains produits
 const LOCAL_IMAGES = {
@@ -148,6 +149,8 @@ export default function ProductDetail() {
   const [priceInfo, setPriceInfo] = useState(null);
   const [priceLoading, setPriceLoading] = useState(false);
   const [priceErr, setPriceErr] = useState("");
+  const [shareGenerating, setShareGenerating] = useState(false);
+  const canvasRef = useRef(null);
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -403,6 +406,156 @@ export default function ProductDetail() {
     setTimeout(() => setFeedback(""), 2200);
   };
 
+  const generateShareImage = async () => {
+    if (!prod) return;
+    setShareGenerating(true);
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    // Instagram story dimensions (1080x1920)
+    canvas.width = 1080;
+    canvas.height = 1920;
+
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, "#0a0a0a");
+    gradient.addColorStop(0.5, "#171717");
+    gradient.addColorStop(1, "#0a0a0a");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Add subtle green glow at top
+    const glowGradient = ctx.createRadialGradient(540, 300, 0, 540, 300, 400);
+    glowGradient.addColorStop(0, "rgba(34, 197, 94, 0.15)");
+    glowGradient.addColorStop(1, "transparent");
+    ctx.fillStyle = glowGradient;
+    ctx.fillRect(0, 0, canvas.width, 700);
+
+    // Load and draw panda logo
+    const logo = new Image();
+    logo.crossOrigin = "anonymous";
+    await new Promise((resolve) => {
+      logo.onload = resolve;
+      logo.src = pandaLogo;
+    });
+
+    // Draw logo at top
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(540, 100, 50, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(logo, 490, 50, 100, 100);
+    ctx.restore();
+
+    // Draw logo border
+    ctx.beginPath();
+    ctx.arc(540, 100, 55, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // "Panda Cycling Shop" text
+    ctx.fillStyle = "#a1a1aa";
+    ctx.font = "20px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("PANDA CYCLING SHOP", 540, 190);
+
+    // Load and draw product image
+    const productImg = new Image();
+    productImg.crossOrigin = "anonymous";
+    const imgSrc = mainImg || defaultImage;
+
+    if (imgSrc) {
+      try {
+        await new Promise((resolve, reject) => {
+          productImg.onload = resolve;
+          productImg.onerror = reject;
+          productImg.src = imgSrc;
+        });
+
+        // Draw product image (centered, large)
+        const imgSize = 600;
+        const imgX = (canvas.width - imgSize) / 2;
+        const imgY = 250;
+
+        // White background for product
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.roundRect(imgX - 20, imgY - 20, imgSize + 40, imgSize + 40, 30);
+        ctx.fill();
+
+        // Draw image
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgSize, imgSize, 20);
+        ctx.clip();
+        ctx.drawImage(productImg, imgX, imgY, imgSize, imgSize);
+        ctx.restore();
+      } catch {
+        // Image failed to load, skip
+      }
+    }
+
+    // Product title
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 48px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+
+    // Word wrap title
+    const title = prod.title || "Produit";
+    const maxWidth = 900;
+    const words = title.split(" ");
+    let line = "";
+    let y = 950;
+
+    for (const word of words) {
+      const testLine = line + word + " ";
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > maxWidth && line !== "") {
+        ctx.fillText(line.trim(), 540, y);
+        line = word + " ";
+        y += 60;
+      } else {
+        line = testLine;
+      }
+    }
+    ctx.fillText(line.trim(), 540, y);
+
+    // Price
+    if (priceInfo?.amount) {
+      ctx.fillStyle = "#22c55e";
+      ctx.font = "bold 56px -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.fillText(formatCurrency(priceInfo.amount, priceInfo.currency), 540, y + 90);
+    }
+
+    // Variant if selected
+    if (selectedVariantLabel) {
+      ctx.fillStyle = "#a1a1aa";
+      ctx.font = "28px -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.fillText(selectedVariantLabel, 540, y + 150);
+    }
+
+    // Website
+    ctx.fillStyle = "#22c55e";
+    ctx.font = "bold 36px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("panda-cycling.ch/catalog", 540, 1750);
+
+    // Bottom tagline
+    ctx.fillStyle = "#52525b";
+    ctx.font = "24px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("La légende continue de rouler 🐼", 540, 1820);
+
+    // Download the image
+    const link = document.createElement("a");
+    link.download = `panda-${prod.title?.toLowerCase().replace(/\s+/g, "-") || "product"}-story.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+
+    setShareGenerating(false);
+  };
+
   const formattedPrice = useMemo(() => {
     if (!priceInfo) return null;
     return formatCurrency(priceInfo.amount, priceInfo.currency);
@@ -612,6 +765,29 @@ export default function ProductDetail() {
               <button type="button" className="btn-primary" onClick={handleAddToCart}>
                 Ajouter au panier
               </button>
+              <button
+                type="button"
+                onClick={generateShareImage}
+                disabled={shareGenerating}
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10 disabled:opacity-50"
+              >
+                {shareGenerating ? (
+                  <>
+                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Génération...
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    Partager
+                  </>
+                )}
+              </button>
               <Link className="btn-ghost" to="/catalog">
                 Retour
               </Link>
@@ -642,6 +818,9 @@ export default function ProductDetail() {
           )}
         </div>
       </div>
+
+      {/* Hidden canvas for share image generation */}
+      <canvas ref={canvasRef} className="hidden" />
     </section>
   );
 }
