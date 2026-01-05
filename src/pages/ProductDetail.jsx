@@ -475,23 +475,36 @@ export default function ProductDetail() {
           productImg.src = imgSrc;
         });
 
-        // Draw product image (centered, large)
-        const imgSize = 600;
-        const imgX = (canvas.width - imgSize) / 2;
-        const imgY = 250;
+        // Draw product image (centered, preserve aspect ratio)
+        const maxSize = 600;
+        const imgRatio = productImg.width / productImg.height;
+        let drawWidth, drawHeight;
+
+        if (imgRatio > 1) {
+          // Landscape
+          drawWidth = maxSize;
+          drawHeight = maxSize / imgRatio;
+        } else {
+          // Portrait or square
+          drawHeight = maxSize;
+          drawWidth = maxSize * imgRatio;
+        }
+
+        const imgX = (canvas.width - drawWidth) / 2;
+        const imgY = 250 + (maxSize - drawHeight) / 2;
 
         // White background for product
         ctx.fillStyle = "#ffffff";
         ctx.beginPath();
-        ctx.roundRect(imgX - 20, imgY - 20, imgSize + 40, imgSize + 40, 30);
+        ctx.roundRect((canvas.width - maxSize) / 2 - 20, 250 - 20, maxSize + 40, maxSize + 40, 30);
         ctx.fill();
 
-        // Draw image
+        // Draw image (preserving aspect ratio)
         ctx.save();
         ctx.beginPath();
-        ctx.roundRect(imgX, imgY, imgSize, imgSize, 20);
+        ctx.roundRect((canvas.width - maxSize) / 2, 250, maxSize, maxSize, 20);
         ctx.clip();
-        ctx.drawImage(productImg, imgX, imgY, imgSize, imgSize);
+        ctx.drawImage(productImg, imgX, imgY, drawWidth, drawHeight);
         ctx.restore();
       } catch {
         // Image failed to load, skip
@@ -540,12 +553,7 @@ export default function ProductDetail() {
     // Website
     ctx.fillStyle = "#22c55e";
     ctx.font = "bold 36px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("panda-cycling.ch/catalog", 540, 1750);
-
-    // Bottom tagline
-    ctx.fillStyle = "#52525b";
-    ctx.font = "24px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("La légende continue de rouler 🐼", 540, 1820);
+    ctx.fillText("panda-cycling.ch/catalog", 540, 1820);
 
     // Download the image
     const link = document.createElement("a");

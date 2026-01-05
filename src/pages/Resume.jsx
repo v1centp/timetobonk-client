@@ -224,12 +224,7 @@ export default function Resume() {
     ctx.fillStyle = "#22c55e";
     ctx.font = `bold ${isStory ? 36 : 32}px -apple-system, BlinkMacSystemFont, sans-serif`;
     ctx.textAlign = "center";
-    ctx.fillText("panda-cycling.ch", 540, isStory ? currentY : canvas.height - 80);
-
-    // Bottom tagline
-    ctx.fillStyle = "#52525b";
-    ctx.font = `${isStory ? 24 : 20}px -apple-system, BlinkMacSystemFont, sans-serif`;
-    ctx.fillText("La légende continue de rouler", 540, isStory ? 1850 : canvas.height - 40);
+    ctx.fillText("panda-cycling.ch", 540, isStory ? 1850 : canvas.height - 50);
 
     // Download the image
     const link = document.createElement("a");

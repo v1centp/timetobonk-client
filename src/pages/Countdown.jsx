@@ -143,12 +143,7 @@ export default function Countdown() {
     // Website
     ctx.fillStyle = "#22c55e";
     ctx.font = "bold 40px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("panda-cycling.ch", 540, 1350);
-
-    // Bottom tagline
-    ctx.fillStyle = "#52525b";
-    ctx.font = "28px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("La légende continue de rouler", 540, 1750);
+    ctx.fillText("panda-cycling.ch", 540, 1750);
 
     // Download the image
     const link = document.createElement("a");
