@@ -92,23 +92,25 @@ export default function RideCard({ ride, compact = false }) {
       </div>
 
       <div className="flex items-center gap-6 text-sm">
-        <div className="flex items-center gap-2">
-          <svg
-            className="h-4 w-4 text-panda-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span className="text-panda-200">{ride.time || formatTime(ride.date)}</span>
-        </div>
+        {ride.category !== "tranquille" && (
+          <div className="flex items-center gap-2">
+            <svg
+              className="h-4 w-4 text-panda-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span className="text-panda-200">{ride.time || formatTime(ride.date)}</span>
+          </div>
+        )}
         {ride.meetingPoint && (
           <div className="flex items-center gap-2">
             <svg
