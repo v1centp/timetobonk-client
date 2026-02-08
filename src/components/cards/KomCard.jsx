@@ -28,7 +28,7 @@ export default function KomCard({ kom, detailsLink }) {
         <p className="text-sm text-panda-400 uppercase tracking-wider mb-1">
           Segment du mois
         </p>
-        <h3 className="text-xl font-bold text-white mb-2">{formatMonth(kom.month)}</h3>
+        <h3 className="text-xl font-bold text-white mb-2">{kom.monthLabel || formatMonth(kom.month)}</h3>
         <a
           href={kom.segmentUrl}
           target="_blank"
