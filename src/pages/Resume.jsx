@@ -121,12 +121,12 @@ export default function Resume() {
     // Sorties section
     drawSection("NOS SORTIES", isStory ? [
       "Mercredi soir — \"Pleine balle\" (sortie rapide)",
-      "Vendredi 5h30 — Sortie tranquille",
+      "Selon semaine — Sortie tranquille (infos WhatsApp)",
       "Sur Zwift l'hiver, sur route dès la belle saison",
       "Weekends — Aventures outdoor (cols, tours)",
     ] : [
       "Mercredi soir — Pleine balle",
-      "Vendredi 5h30 — Tranquille",
+      "Selon semaine — Tranquille (infos WhatsApp)",
       "Weekends — Aventures outdoor",
     ]);
 
@@ -264,7 +264,7 @@ export default function Resume() {
             <h3 className="mb-2 font-semibold text-bamboo-400">Sorties</h3>
             <ul className="space-y-1 text-sm text-panda-300">
               <li>• Mercredi soir — "Pleine balle" (sortie rapide)</li>
-              <li>• Vendredi 5h30 — Sortie tranquille</li>
+              <li>• Selon semaine — Sortie tranquille (infos WhatsApp)</li>
               <li>• Sur Zwift l'hiver, sur route dès la belle saison</li>
               <li>• Weekends — Aventures outdoor (cols, tours)</li>
             </ul>

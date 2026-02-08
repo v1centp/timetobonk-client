@@ -173,7 +173,7 @@ export default function Home() {
               Allure modérée, no drop. On ne lâche personne, on roule ensemble.
             </p>
             <div className="flex items-center gap-4 text-xs text-panda-500">
-              <span>Vendredi 5h30</span>
+              <span>Selon semaine</span>
               <span>Zwift</span>
             </div>
           </Link>

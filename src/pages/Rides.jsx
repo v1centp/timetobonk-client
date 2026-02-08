@@ -46,9 +46,9 @@ export default function Rides() {
               <span className="text-sm font-bold">VE</span>
             </div>
             <div>
-              <h3 className="font-medium text-white">Vendredi 5h30</h3>
+              <h3 className="font-medium text-white">Selon semaine</h3>
               <p className="text-sm text-panda-400">
-                Sortie <strong className="text-bamboo-400">tranquille</strong> sur Zwift.
+                Sortie <strong className="text-bamboo-400">tranquille</strong> sur Zwift. Infos sur WhatsApp.
               </p>
             </div>
           </div>
