@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: "/evenements", label: "Événements" },
   { to: "/catalog", label: "Shop" },
   { to: "/a-propos", label: "À propos" },
+  { to: "/tour-irlande", label: "Tour d'Irlande" },
 ];
 
 // Navigation bottom bar pour mobile
