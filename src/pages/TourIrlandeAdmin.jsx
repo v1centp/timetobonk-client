@@ -13,7 +13,7 @@ export default function TourIrlandeAdmin() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API}/tour-irlande/livetrack`, {
+      const res = await fetch(`${API}/api/tour-irlande/livetrack`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pin, livetrackUrl: url }),

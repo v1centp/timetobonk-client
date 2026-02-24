@@ -6,7 +6,7 @@ export default function TourIrlande() {
   const [livetrackUrl, setLivetrackUrl] = useState(FALLBACK_URL);
 
   useEffect(() => {
-    fetch(`${API}/tour-irlande`)
+    fetch(`${API}/api/tour-irlande`)
       .then((r) => r.json())
       .then((data) => {
         if (data.livetrackUrl) setLivetrackUrl(data.livetrackUrl);
@@ -108,34 +108,15 @@ export default function TourIrlande() {
 
       {/* LiveTrack */}
       <div className="rounded-2xl border border-panda-700/50 bg-panda-800/40 overflow-hidden">
-        <div className="flex items-center justify-between px-6 pt-5 pb-4">
-          <div>
-            <h2 className="text-xl font-semibold text-white">Suivi en direct</h2>
-            <p className="text-sm text-panda-300 mt-1">
-              Suivez l'avancement de JC en temps réel via Garmin LiveTrack.
-            </p>
-          </div>
-          <a
-            href={livetrackUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary inline-flex items-center gap-2 shrink-0"
-          >
-            Ouvrir
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-            </svg>
-          </a>
+        <div className="px-6 py-8 text-center">
+          <h2 className="text-xl font-semibold text-white mb-2">Suivi en direct</h2>
+          <p className="text-sm text-panda-300">
+            Le LiveTrack sera activé le 27 février au départ de JC.
+          </p>
+          <p className="text-xs text-panda-500 mt-1">
+            LiveTrack will be activated on February 27 when JC starts riding.
+          </p>
         </div>
-
-        <iframe
-          src={livetrackUrl}
-          title="Garmin LiveTrack — JC Tour d'Irlande"
-          className="w-full border-t border-panda-700/50"
-          style={{ height: "70vh", minHeight: "500px" }}
-          allow="geolocation"
-          loading="lazy"
-        />
       </div>
     </section>
   );
