@@ -24,18 +24,18 @@ export default function TourIrlande() {
       </p>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="rounded-2xl border border-panda-700/50 bg-panda-800/40 p-4 text-center">
-          <p className="text-2xl font-bold text-bamboo-400">2 000 km</p>
-          <p className="text-xs text-panda-400 mt-1">Distance</p>
+      <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
+        <div className="rounded-2xl border border-panda-700/50 bg-panda-800/40 p-3 sm:p-4 text-center">
+          <p className="text-lg sm:text-2xl font-bold text-bamboo-400">2 000 km</p>
+          <p className="text-[10px] sm:text-xs text-panda-400 mt-1">Distance</p>
         </div>
-        <div className="rounded-2xl border border-panda-700/50 bg-panda-800/40 p-4 text-center">
-          <p className="text-2xl font-bold text-bamboo-400">15 000 D+</p>
-          <p className="text-xs text-panda-400 mt-1">Dénivelé</p>
+        <div className="rounded-2xl border border-panda-700/50 bg-panda-800/40 p-3 sm:p-4 text-center">
+          <p className="text-lg sm:text-2xl font-bold text-bamboo-400">15 000 D+</p>
+          <p className="text-[10px] sm:text-xs text-panda-400 mt-1">Dénivelé</p>
         </div>
-        <div className="rounded-2xl border border-panda-700/50 bg-panda-800/40 p-4 text-center">
-          <p className="text-2xl font-bold text-bamboo-400">10 jours</p>
-          <p className="text-xs text-panda-400 mt-1">Durée</p>
+        <div className="rounded-2xl border border-panda-700/50 bg-panda-800/40 p-3 sm:p-4 text-center">
+          <p className="text-lg sm:text-2xl font-bold text-bamboo-400">10 jours</p>
+          <p className="text-[10px] sm:text-xs text-panda-400 mt-1">Durée</p>
         </div>
       </div>
 
