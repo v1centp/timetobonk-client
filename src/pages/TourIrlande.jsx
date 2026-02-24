@@ -1,6 +1,19 @@
-import { LIVETRACK_URL, DONATE_URL, STRAVA_ROUTE_URL, STRAVA_ROUTE_IMAGE } from "../data/tourIrlande.js";
+import { useState, useEffect } from "react";
+import { LIVETRACK_URL as FALLBACK_URL, DONATE_URL, STRAVA_ROUTE_URL, STRAVA_ROUTE_IMAGE } from "../data/tourIrlande.js";
+import { API } from "../lib/api.js";
 
 export default function TourIrlande() {
+  const [livetrackUrl, setLivetrackUrl] = useState(FALLBACK_URL);
+
+  useEffect(() => {
+    fetch(`${API}/tour-irlande`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.livetrackUrl) setLivetrackUrl(data.livetrackUrl);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section className="container">
       <h1 className="text-3xl font-bold text-white mb-2">
@@ -103,7 +116,7 @@ export default function TourIrlande() {
             </p>
           </div>
           <a
-            href={LIVETRACK_URL}
+            href={livetrackUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary inline-flex items-center gap-2 shrink-0"
@@ -116,7 +129,7 @@ export default function TourIrlande() {
         </div>
 
         <iframe
-          src={LIVETRACK_URL}
+          src={livetrackUrl}
           title="Garmin LiveTrack — JC Tour d'Irlande"
           className="w-full border-t border-panda-700/50"
           style={{ height: "70vh", minHeight: "500px" }}

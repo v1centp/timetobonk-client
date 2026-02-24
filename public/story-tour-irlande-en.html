@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1080,height=1920">
+  <title>Story — Tour of Ireland</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 1080px;
+      height: 1920px;
+      font-family: 'Inter', sans-serif;
+      background: #0f0f0f;
+      color: #e5e5e5;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 90% 40% at 50% 20%, rgba(34,197,94,0.15), transparent),
+                  radial-gradient(ellipse 60% 30% at 30% 90%, rgba(34,197,94,0.08), transparent);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 80px 64px;
+      justify-content: space-between;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 999px;
+      padding: 12px 28px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #4ade80;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+
+    .badge .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    h1 {
+      font-size: 96px;
+      font-weight: 900;
+      line-height: 1.05;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span {
+      color: #4ade80;
+    }
+
+    .dates {
+      font-size: 28px;
+      color: #a3a3a3;
+      font-weight: 300;
+      margin-top: 8px;
+    }
+
+    .stats {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 36px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 64px;
+      font-weight: 900;
+      color: #4ade80;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: 18px;
+      color: #737373;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .stats-row .stat-card {
+      flex: 1;
+    }
+
+    .stats-row .stat-value {
+      font-size: 48px;
+    }
+
+    .description {
+      font-size: 26px;
+      line-height: 1.6;
+      color: #a3a3a3;
+      text-align: center;
+    }
+
+    .charity {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 24px 32px;
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 20px;
+    }
+
+    .charity .heart {
+      font-size: 32px;
+    }
+
+    .charity-text {
+      font-size: 20px;
+      color: #d4d4d4;
+    }
+
+    .charity-text strong {
+      color: #fff;
+    }
+
+    .charity-link {
+      font-size: 16px;
+      color: #4ade80;
+      margin-top: 2px;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #525252;
+    }
+
+    .logo-light { font-weight: 300; }
+    .logo-bold { color: #737373; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="badge">
+        <div class="dot"></div>
+        Charity challenge
+      </div>
+      <div>
+        <h1>Tour of<br><span>Ireland</span></h1>
+        <p class="dates">February 27 — March 8, 2026</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value">2,000 km</div>
+        <div class="stat-label">Distance</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">15,000</div>
+          <div class="stat-label">Metres elev.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">10</div>
+          <div class="stat-label">Days</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="description">
+      JC is taking on a personal challenge: cycling around
+      Ireland to support Make‑A‑Wish Ireland.
+    </p>
+
+    <div class="charity">
+      <div class="heart">💚</div>
+      <div>
+        <div class="charity-text">In support of <strong>Make‑A‑Wish Ireland</strong></div>
+        <div class="charity-link">idonate.ie/fundraiser/jeanchristophecuypers</div>
+      </div>
+    </div>
+
+    <div class="logo">
+      <span class="logo-light">Panda</span> <span class="logo-bold">Cycling</span>
+    </div>
+  </div>
+</body>
+</html>

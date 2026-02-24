@@ -5,7 +5,7 @@ export const LIVETRACK_URL =
   "https://livetrack.garmin.com/session/295731f6-7179-86ac-9672-e752bc966600/token/83EFD8E1F44679554BA0DEF44777B5EB";
 
 // Lien de donation Make-A-Wish Ireland (à remplacer par le vrai lien de campagne)
-export const DONATE_URL = "https://www.makeawish.ie/donate";
+export const DONATE_URL = "https://www.idonate.ie/fundraiser/jeanchristophecuypers";
 
 // Route Strava complète
 export const STRAVA_ROUTE_URL = "https://www.strava.com/routes/3455275974491714726";
