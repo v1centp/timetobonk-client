@@ -107,26 +107,23 @@ export default function TourIrlande() {
       </a>
 
       {/* LiveTrack */}
-      <div className="rounded-2xl border border-panda-700/50 bg-panda-800/40 overflow-hidden">
-        <div className="px-6 pt-6 pb-3 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-white">Suivi en direct / Live Tracking</h2>
-          <a
-            href={livetrackUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-bamboo-400 hover:text-bamboo-300 transition"
-          >
-            Ouvrir dans Garmin &rarr;
-          </a>
-        </div>
-        <iframe
-          src={livetrackUrl}
-          title="LiveTrack Garmin"
-          className="w-full border-0"
-          style={{ height: "500px" }}
-          allow="geolocation"
-        />
-      </div>
+      <a
+        href={livetrackUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block rounded-2xl border border-bamboo-500/30 bg-bamboo-500/10 p-8 text-center transition hover:bg-bamboo-500/20 hover:border-bamboo-500/50"
+      >
+        <h2 className="text-2xl font-bold text-white mb-2">Suivi en direct / Live Tracking</h2>
+        <p className="text-sm text-panda-300 mb-6">
+          Suivre JC en temps réel sur la carte et lui envoyer un message
+        </p>
+        <span className="inline-flex items-center gap-2 rounded-xl bg-bamboo-500 text-panda-900 font-bold text-lg px-8 py-4">
+          Ouvrir le LiveTrack
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+          </svg>
+        </span>
+      </a>
     </section>
   );
 }
