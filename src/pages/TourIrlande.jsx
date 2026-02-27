@@ -107,17 +107,20 @@ export default function TourIrlande() {
       </a>
 
       {/* LiveTrack */}
-      <div className="rounded-2xl border border-panda-700/50 bg-panda-800/40 overflow-hidden">
-        <div className="px-6 py-8 text-center">
-          <h2 className="text-xl font-semibold text-white mb-2">Suivi en direct</h2>
-          <p className="text-sm text-panda-300">
-            Le LiveTrack sera activé le 27 février au départ de JC.
-          </p>
-          <p className="text-xs text-panda-500 mt-1">
-            LiveTrack will be activated on February 27 when JC starts riding.
-          </p>
-        </div>
-      </div>
+      <a
+        href={livetrackUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block rounded-2xl border border-panda-700/50 bg-panda-800/40 overflow-hidden px-6 py-8 text-center transition hover:border-bamboo-500/40 hover:bg-panda-800/60"
+      >
+        <h2 className="text-xl font-semibold text-white mb-2">Suivi en direct / Live Tracking</h2>
+        <p className="text-sm text-bamboo-400">
+          Suivre JC en temps réel
+        </p>
+        <p className="text-xs text-panda-400 mt-1">
+          Follow JC live on the road
+        </p>
+      </a>
     </section>
   );
 }
