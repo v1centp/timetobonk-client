@@ -108,7 +108,7 @@ export default function RideCard({ ride, compact = false }) {
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span className="text-panda-200">{ride.time || formatTime(ride.date)}</span>
+            <span className="text-panda-200">{ride.time || "À définir"}</span>
           </div>
         )}
         {ride.meetingPoint && (

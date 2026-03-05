@@ -206,8 +206,8 @@ export default function Admin() {
             <input name="date" type="date" value={form.date} onChange={handleChange} required className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-panda-300 mb-1">Heure *</label>
-            <input name="time" type="time" value={form.time} onChange={handleChange} required className={inputClass} />
+            <label className="block text-sm font-medium text-panda-300 mb-1">Heure</label>
+            <input name="time" type="time" value={form.time} onChange={handleChange} className={inputClass} />
           </div>
         </div>
 
@@ -251,7 +251,7 @@ export default function Admin() {
         {/* Lien */}
         <div>
           <label className="block text-sm font-medium text-panda-300 mb-1">Lien</label>
-          <input name="link" value={form.link} onChange={handleChange} type="url" placeholder="https://..." className={inputClass} />
+          <input name="link" value={form.link} onChange={handleChange} placeholder="https://..." className={inputClass} />
         </div>
 
         {/* Status */}
