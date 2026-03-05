@@ -2,36 +2,12 @@ import { useState, useEffect, useMemo } from "react";
 import { API } from "../lib/api";
 
 /**
- * Transforme un événement Strava en format ride
- */
-function formatEvent(event) {
-  return {
-    id: event.id,
-    title: event.title,
-    date: event.date,
-    category: event.category,
-    description: event.description || "",
-    location: event.location || null,
-    distance: event.route?.distance ? Math.round(event.route.distance / 1000) : null,
-    elevation: event.route?.elevation || null,
-    meetingPoint: event.location || null,
-    organizer: event.organizer || "Panda Cycling",
-    participants: event.memberCount || 0,
-    maxParticipants: null,
-    stravaUrl: event.stravaUrl,
-    isPast: event.isPast,
-  };
-}
-
-/**
- * Hook pour charger les sorties vélo depuis Strava
- * @param {import('../types').RideCategory | 'all'} [category='all'] - Filtrer par catégorie
- * @param {'upcoming' | 'past' | 'all'} [timeFilter='upcoming'] - Filtrer par temps
+ * Hook pour charger les sorties vélo depuis l'API
+ * @param {import('../types').RideCategory | 'all'} [category='all']
  * @returns {{ rides: import('../types').Ride[], pastRides: import('../types').Ride[], loading: boolean, error: string | null }}
  */
-export function useRides(category = "all", timeFilter = "upcoming") {
-  const [upcomingRides, setUpcomingRides] = useState([]);
-  const [pastRides, setPastRides] = useState([]);
+export function useRides(category = "all") {
+  const [allRides, setAllRides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -43,65 +19,52 @@ export function useRides(category = "all", timeFilter = "upcoming") {
       setError(null);
 
       try {
-        const res = await fetch(`${API}/api/strava/club/events`, {
-          signal: controller.signal,
-        });
+        const url = category === "all"
+          ? `${API}/api/rides`
+          : `${API}/api/rides?category=${category}`;
 
-        if (!res.ok) throw new Error("Strava API non disponible");
+        const res = await fetch(url, { signal: controller.signal });
+        if (!res.ok) throw new Error("API non disponible");
 
-        const { upcoming, past } = await res.json();
-
-        setUpcomingRides(upcoming.map(formatEvent));
-        setPastRides(past.map(formatEvent));
+        const data = await res.json();
+        setAllRides(data);
       } catch (err) {
         if (err.name === "AbortError") return;
-        console.info("Strava events non disponible:", err.message);
+        console.info("API rides non disponible:", err.message);
         setError(err.message);
-        setUpcomingRides([]);
-        setPastRides([]);
+        setAllRides([]);
       } finally {
         setLoading(false);
       }
     }
 
     fetchRides();
-
     return () => controller.abort();
-  }, []);
+  }, [category]);
 
-  // Sélectionner les rides selon le filtre temps
-  const allRides = useMemo(() => {
-    if (timeFilter === "upcoming") return upcomingRides;
-    if (timeFilter === "past") return pastRides;
-    return [...upcomingRides, ...pastRides];
-  }, [upcomingRides, pastRides, timeFilter]);
+  const now = new Date();
 
-  // Filtrer par catégorie
-  const filteredRides = useMemo(() => {
-    if (category === "all") return allRides;
-    return allRides.filter((ride) => ride.category === category);
-  }, [allRides, category]);
+  const rides = useMemo(
+    () => allRides.filter((r) => new Date(r.date) >= now),
+    [allRides]
+  );
 
-  // Filtrer les pastRides par catégorie aussi
-  const filteredPastRides = useMemo(() => {
-    if (category === "all") return pastRides;
-    return pastRides.filter((ride) => ride.category === category);
-  }, [pastRides, category]);
+  const pastRides = useMemo(
+    () => allRides.filter((r) => new Date(r.date) < now),
+    [allRides]
+  );
 
-  return { rides: filteredRides, pastRides: filteredPastRides, loading, error };
+  return { rides, pastRides, loading, error };
 }
 
 /**
  * Hook pour obtenir les prochaines sorties
- * @param {number} [limit=3] - Nombre de sorties à retourner
- * @returns {{ rides: import('../types').Ride[], loading: boolean, error: string | null }}
+ * @param {number} [limit=3]
  */
 export function useUpcomingRides(limit = 3) {
-  const { rides, loading, error } = useRides("all", "upcoming");
+  const { rides, loading, error } = useRides("all");
 
-  const limitedRides = useMemo(() => {
-    return rides.slice(0, limit);
-  }, [rides, limit]);
+  const limitedRides = useMemo(() => rides.slice(0, limit), [rides, limit]);
 
   return { rides: limitedRides, loading, error };
 }

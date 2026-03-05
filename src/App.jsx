@@ -13,6 +13,7 @@ import Countdown from "./pages/Countdown.jsx";
 import Resume from "./pages/Resume.jsx";
 import TourIrlande from "./pages/TourIrlande.jsx";
 import TourIrlandeAdmin from "./pages/TourIrlandeAdmin.jsx";
+import Admin from "./pages/Admin.jsx";
 
 // Mode lancement : mettre à true pour activer le countdown pour tous
 const LAUNCH_MODE = false;
@@ -73,6 +74,7 @@ export default function App() {
         <Route path="/resume" element={<Resume />} />
         <Route path="/tour-irlande" element={<TourIrlande />} />
         <Route path="/tour-irlande/admin" element={<TourIrlandeAdmin />} />
+        <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </Layout>
