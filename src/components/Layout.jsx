@@ -150,7 +150,7 @@ export default function Layout({ children }) {
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-2 md:flex">
+          <nav className="hidden items-center gap-2 lg:flex">
             {NAV_ITEMS.map((item) => (
               <NavLink key={item.to} to={item.to} end={item.end} className={renderDesktopLink}>
                 {item.label}
@@ -201,7 +201,7 @@ export default function Layout({ children }) {
             </div>
           </nav>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <Link
               to="/checkout"
               className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-panda-700/50 bg-panda-800/80 text-panda-200 transition hover:border-panda-600 hover:text-white"
@@ -231,7 +231,7 @@ export default function Layout({ children }) {
       </header>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
+        <div className="fixed inset-0 z-50 flex lg:hidden">
           {/* Backdrop */}
           <div
             className={`absolute inset-0 bg-panda-950/90 backdrop-blur-sm transition-opacity duration-200 ${isClosing ? "opacity-0" : "opacity-100"}`}
@@ -347,7 +347,7 @@ export default function Layout({ children }) {
       <main className="flex-1 pb-24 pt-6 sm:pb-20 sm:pt-10">{children}</main>
 
       {/* Bottom navigation mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-panda-700/50 bg-panda-900/95 backdrop-blur-lg md:hidden safe-area-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-panda-700/50 bg-panda-900/95 backdrop-blur-lg lg:hidden safe-area-bottom">
         <div className="grid grid-cols-4">
           {BOTTOM_NAV_ITEMS.map((item) => {
             // Bouton menu
@@ -405,7 +405,7 @@ export default function Layout({ children }) {
         </div>
       </nav>
 
-      <footer className="border-t border-panda-800/50 bg-panda-900/50 py-12 mb-16 md:mb-0">
+      <footer className="border-t border-panda-800/50 bg-panda-900/50 py-12 mb-16 lg:mb-0">
         <div className="container">
           <div className="grid gap-8 md:grid-cols-4 mb-8">
             {/* Logo + Description */}
