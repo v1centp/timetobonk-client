@@ -35,49 +35,19 @@ export default function About() {
             </div>
             <div className="space-y-5 text-panda-300 leading-relaxed">
               <p>
-                Il y a fort longtemps, dit-on, un petit panda serait tombé par hasard sur un hangar abandonné.
-                À l'intérieur, des vélos oubliés, couverts de poussière, mais encore pleins de promesses.
-                Il en aurait choisi un, sans vraiment savoir pourquoi.
-                Et ce jour-là, quelque chose aurait commencé.
+                Panda Cycling, c'est un groupe de cyclistes amateurs basé à Lausanne.
+                On roule pour se faire plaisir, prendre l'air, découvrir de
+                nouvelles routes et finir parfois autour d'un verre ou de grillades.
               </p>
               <p>
-                Très vite, d'autres l'auraient rejoint.
-                Des amis, attirés par la route, le mouvement, l'envie d'aller voir plus loin.
-                Ensemble, ils auraient roulé sans plan, traversé des vallées, gravi des cols,
-                parcouru le monde entier — juste pour le plaisir d'avancer… ou pour un KOM.
-              </p>
-              <p>
-                Est-ce que tout ça est vrai ?
-                Personne ne peut vraiment le dire.
-                Peut-être que c'est une histoire qu'on se raconte.
-                Peut-être qu'elle a grandi avec le temps.
-              </p>
-              <p className="text-white font-medium italic border-l-2 border-bamboo-500 pl-4">
-                Mais une chose est sûre : la légende continue de rouler.
-                Et aujourd'hui encore, la Panda Cycling avance, fidèle à cet esprit —
-                libre, infatigable, et souvent pleine balle.
+                Il y a des sorties tranquilles, des sorties plus nerveuses, des
+                Panda'ventures le weekend et quelques KOM à aller chercher pour le
+                plaisir du challenge. Pas besoin d'être pro : il faut juste avoir
+                envie de rouler et de rejoindre le mouvement.
               </p>
             </div>
           </article>
         </div>
-      </section>
-
-      {/* Notre programme */}
-      <section className="max-w-4xl mx-auto">
-        <article className="glass-panel p-8">
-          <h2 className="text-xl font-semibold text-white mb-6">Notre programme</h2>
-          <ul className="space-y-4 text-panda-400">
-            <li>
-              <strong className="text-white">Mercredi soir</strong> — Course "pleine balle" sur Zwift l'hiver, sur route dès la belle saison
-            </li>
-            <li>
-              <strong className="text-white">Selon semaine</strong> — Sortie tranquille sur Zwift, infos sur WhatsApp
-            </li>
-            <li>
-              <strong className="text-white">Weekends</strong> — Sorties aventure (cols, tours hors Lausanne) annoncées ~1 mois à l'avance
-            </li>
-          </ul>
-        </article>
       </section>
     </div>
   );

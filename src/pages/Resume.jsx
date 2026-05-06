@@ -1,17 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import pandaLogo from "../assets/panda logo.png";
 
 export default function Resume() {
   const [generating, setGenerating] = useState(false);
-  const [komData, setKomData] = useState(null);
   const canvasRef = useRef(null);
-
-  useEffect(() => {
-    fetch("/api/strava/kom/current")
-      .then((r) => r.ok ? r.json() : null)
-      .then(setKomData)
-      .catch(() => null);
-  }, []);
 
   const generateImage = async (format = "story") => {
     setGenerating(true);
@@ -130,26 +122,6 @@ export default function Resume() {
       "Weekends — Aventures outdoor",
     ]);
 
-    // KOM section
-    const komName = komData?.segmentName || "Segment du mois";
-    const komCity = komData?.city || "";
-    drawSection("KOM DU MOIS", isStory ? [
-      "Chaque mois, un segment Strava à attaquer",
-      komName + (komCity ? ` (${komCity})` : ""),
-      "strava.com/segments/" + (komData?.segmentId || ""),
-    ] : [
-      "Un segment Strava chaque mois",
-      komName,
-    ], "#f59e0b");
-
-    // Events section
-    drawSection("ÉVÉNEMENTS", isStory ? [
-      "Grillades prévues cet été !",
-      "Sorties aventure annoncées à l'avance",
-    ] : [
-      "Grillades, sorties aventure...",
-    ], "#3b82f6");
-
     // Shop section
     drawSection("SHOP", isStory ? [
       "Maillot cycliste Panda Edition",
@@ -267,23 +239,6 @@ export default function Resume() {
               <li>• Selon semaine — Sortie tranquille (infos WhatsApp)</li>
               <li>• Sur Zwift l'hiver, sur route dès la belle saison</li>
               <li>• Weekends — Aventures outdoor (cols, tours)</li>
-            </ul>
-          </div>
-
-          <div className="glass-panel p-4">
-            <h3 className="mb-2 font-semibold text-amber-400">KOM du mois</h3>
-            <ul className="space-y-1 text-sm text-panda-300">
-              <li>• Chaque mois, un segment Strava à attaquer</li>
-              <li>• {komData?.segmentName || "Chargement..."} {komData?.city ? `(${komData.city})` : ""}</li>
-              <li>• strava.com/segments/{komData?.segmentId || "..."}</li>
-            </ul>
-          </div>
-
-          <div className="glass-panel p-4">
-            <h3 className="mb-2 font-semibold text-blue-400">Événements</h3>
-            <ul className="space-y-1 text-sm text-panda-300">
-              <li>• Grillades prévues cet été !</li>
-              <li>• Sorties aventure annoncées à l'avance</li>
             </ul>
           </div>
 

@@ -9,14 +9,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://panda-cycling.ch/kom</loc>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://panda-cycling.ch/events</loc>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://panda-cycling.ch/catalog</loc>
     <priority>0.7</priority>
   </url>

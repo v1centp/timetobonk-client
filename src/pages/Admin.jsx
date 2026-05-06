@@ -24,18 +24,11 @@ export default function Admin() {
   const [status, setStatus] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [rides, setRides] = useState([]);
-  const [events, setEvents] = useState([]);
-
-  const isRide = form.type === "ride";
 
   const fetchData = useCallback(async () => {
     try {
-      const [ridesRes, eventsRes] = await Promise.all([
-        fetch(`${API}/api/rides`),
-        fetch(`${API}/api/events`),
-      ]);
+      const ridesRes = await fetch(`${API}/api/rides`);
       if (ridesRes.ok) setRides(await ridesRes.json());
-      if (eventsRes.ok) setEvents(await eventsRes.json());
     } catch {}
   }, []);
 
@@ -47,15 +40,15 @@ export default function Admin() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleEdit = (item, type) => {
+  const handleEdit = (item) => {
     setEditingId(item.id);
     setForm({
-      type,
+      type: "ride",
       title: item.title,
       date: item.date,
       time: item.time,
       category: item.category || "tranquille",
-      location: type === "ride" ? item.meetingPoint || "" : item.location || "",
+      location: item.meetingPoint || "",
       description: item.description || "",
       link: item.link || "",
     });
@@ -65,16 +58,15 @@ export default function Admin() {
 
   const handleCancel = () => {
     setEditingId(null);
-    setForm({ ...emptyForm, type: form.type });
+    setForm(emptyForm);
     setStatus(null);
   };
 
-  const handleDelete = async (id, type) => {
+  const handleDelete = async (id) => {
     if (!confirm("Supprimer ?")) return;
 
-    const endpoint = type === "ride" ? `/api/rides/${id}` : `/api/events/${id}`;
     try {
-      const res = await fetch(`${API}${endpoint}`, { method: "DELETE" });
+      const res = await fetch(`${API}/api/rides/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur");
       fetchData();
       if (editingId === id) handleCancel();
@@ -89,28 +81,18 @@ export default function Admin() {
     setStatus(null);
 
     const isEdit = !!editingId;
-    const baseEndpoint = isRide ? "/api/rides" : "/api/events";
-    const endpoint = isEdit ? `${baseEndpoint}/${editingId}` : baseEndpoint;
+    const endpoint = isEdit ? `/api/rides/${editingId}` : "/api/rides";
     const method = isEdit ? "PUT" : "POST";
 
-    const body = isRide
-      ? {
-          title: form.title,
-          date: form.date,
-          time: form.time,
-          category: form.category,
-          meetingPoint: form.location,
-          description: form.description,
-          link: form.link || undefined,
-        }
-      : {
-          title: form.title,
-          date: form.date,
-          time: form.time,
-          location: form.location,
-          description: form.description,
-          link: form.link || undefined,
-        };
+    const body = {
+      title: form.title,
+      date: form.date,
+      time: form.time,
+      category: form.category,
+      meetingPoint: form.location,
+      description: form.description,
+      link: form.link || undefined,
+    };
 
     try {
       const res = await fetch(`${API}${endpoint}`, {
@@ -125,9 +107,8 @@ export default function Admin() {
       }
 
       const action = isEdit ? "modifié" : "ajouté";
-      const label = isRide ? "Sortie" : "Événement";
-      setStatus({ ok: true, msg: `${label} ${action} !` });
-      setForm({ ...emptyForm, type: form.type });
+      setStatus({ ok: true, msg: `Sortie ${action} !` });
+      setForm(emptyForm);
       setEditingId(null);
       fetchData();
     } catch (err) {
@@ -140,43 +121,17 @@ export default function Admin() {
   const inputClass =
     "w-full rounded-lg bg-panda-800 border border-panda-700 px-4 py-2.5 text-white placeholder-panda-500 focus:border-bamboo-500 focus:outline-none focus:ring-1 focus:ring-bamboo-500 transition";
 
-  const items = (isRide ? rides : events).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+  const items = rides.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
     <div className="container max-w-2xl">
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Admin</h1>
-        <p className="text-panda-400">Gérer les sorties et événements.</p>
+        <p className="text-panda-400">Gérer les sorties.</p>
       </header>
 
       {/* Formulaire */}
       <form onSubmit={handleSubmit} className="glass-panel p-6 flex flex-col gap-5 mb-10">
-        {/* Type toggle */}
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={() => { handleCancel(); setForm({ ...emptyForm, type: "ride" }); }}
-            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition ${
-              isRide
-                ? "bg-bamboo-500 text-white"
-                : "bg-panda-800 text-panda-400 border border-panda-700 hover:border-panda-500"
-            }`}
-          >
-            Sortie
-          </button>
-          <button
-            type="button"
-            onClick={() => { handleCancel(); setForm({ ...emptyForm, type: "event" }); }}
-            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition ${
-              !isRide
-                ? "bg-bamboo-500 text-white"
-                : "bg-panda-800 text-panda-400 border border-panda-700 hover:border-panda-500"
-            }`}
-          >
-            Événement
-          </button>
-        </div>
-
         {editingId && (
           <div className="rounded-lg bg-bamboo-500/10 border border-bamboo-500/30 px-4 py-2.5 text-sm text-bamboo-400 flex items-center justify-between">
             <span>Modification en cours</span>
@@ -211,17 +166,15 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Catégorie (sorties only) */}
-        {isRide && (
-          <div>
-            <label className="block text-sm font-medium text-panda-300 mb-1">Type *</label>
-            <select name="category" value={form.category} onChange={handleChange} className={inputClass}>
-              {CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
-            </select>
-          </div>
-        )}
+        {/* Catégorie */}
+        <div>
+          <label className="block text-sm font-medium text-panda-300 mb-1">Type *</label>
+          <select name="category" value={form.category} onChange={handleChange} className={inputClass}>
+            {CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+        </div>
 
         {/* Lieu */}
         <div>
@@ -243,7 +196,7 @@ export default function Admin() {
             value={form.description}
             onChange={handleChange}
             rows={3}
-            placeholder="Détails de la sortie ou événement..."
+            placeholder="Détails de la sortie..."
             className={inputClass + " resize-none"}
           />
         </div>
@@ -271,16 +224,14 @@ export default function Admin() {
             ? "Envoi..."
             : editingId
               ? "Enregistrer les modifications"
-              : isRide
-                ? "Ajouter la sortie"
-                : "Ajouter l'événement"}
+              : "Ajouter la sortie"}
         </button>
       </form>
 
       {/* Liste existante */}
       <section>
         <h2 className="text-xl font-semibold text-white mb-4">
-          {isRide ? "Sorties" : "Événements"} ({items.length})
+          Sorties ({items.length})
         </h2>
 
         {items.length === 0 ? (
@@ -296,7 +247,7 @@ export default function Admin() {
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    {isRide && item.category && (
+                    {item.category && (
                       <span className="text-xs rounded-full bg-panda-700/50 px-2 py-0.5 text-panda-300">
                         {item.category}
                       </span>
@@ -307,13 +258,13 @@ export default function Admin() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <button
-                    onClick={() => handleEdit(item, isRide ? "ride" : "event")}
+                    onClick={() => handleEdit(item)}
                     className="text-sm text-panda-400 hover:text-bamboo-400 transition px-2 py-1"
                   >
                     Modifier
                   </button>
                   <button
-                    onClick={() => handleDelete(item.id, isRide ? "ride" : "event")}
+                    onClick={() => handleDelete(item.id)}
                     className="text-sm text-panda-500 hover:text-red-400 transition px-2 py-1"
                   >
                     Supprimer

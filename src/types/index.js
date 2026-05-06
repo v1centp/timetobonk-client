@@ -23,40 +23,6 @@
  */
 
 /**
- * @typedef {Object} Event
- * @property {string} id - Identifiant unique
- * @property {string} title - Nom de l'événement
- * @property {string} date - Date ISO de l'événement
- * @property {string} time - Heure de début
- * @property {string} location - Lieu de l'événement
- * @property {string} description - Description de l'événement
- * @property {string} [imageUrl] - URL de l'image
- * @property {boolean} [isRegistrationOpen] - Inscriptions ouvertes
- * @property {string} [registrationUrl] - URL d'inscription (WhatsApp ou formulaire)
- */
-
-/**
- * @typedef {Object} KomEntry
- * @property {number} rank - Position au classement
- * @property {string} athleteName - Nom de l'athlète
- * @property {string} time - Temps réalisé (format "mm:ss")
- * @property {string} [stravaUrl] - Lien vers l'activité Strava
- * @property {string} [avatarUrl] - Photo de profil
- */
-
-/**
- * @typedef {Object} KomMonthly
- * @property {string} id - Identifiant unique
- * @property {string} month - Mois (format "YYYY-MM")
- * @property {string} segmentName - Nom du segment Strava
- * @property {string} segmentUrl - URL du segment sur Strava
- * @property {number} segmentDistance - Distance du segment en mètres
- * @property {number} segmentElevation - Dénivelé du segment en mètres
- * @property {string} [segmentImageUrl] - Image du segment
- * @property {KomEntry[]} leaderboard - Classement du mois
- */
-
-/**
  * @typedef {Object} Product
  * @property {string} id - Identifiant unique
  * @property {string} title - Nom du produit

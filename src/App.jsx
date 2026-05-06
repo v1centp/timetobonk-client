@@ -7,12 +7,8 @@ import ProductDetail from "./pages/ProductDetail.jsx";
 import About from "./pages/About.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Rides from "./pages/Rides.jsx";
-import Events from "./pages/Events.jsx";
-import Kom from "./pages/Kom.jsx";
 import Countdown from "./pages/Countdown.jsx";
 import Resume from "./pages/Resume.jsx";
-import TourIrlande from "./pages/TourIrlande.jsx";
-import TourIrlandeAdmin from "./pages/TourIrlandeAdmin.jsx";
 import Admin from "./pages/Admin.jsx";
 
 // Mode lancement : mettre à true pour activer le countdown pour tous
@@ -64,16 +60,12 @@ export default function App() {
       <Routes>
         <Route index element={<Home />} />
         <Route path="/sorties" element={<Rides />} />
-        <Route path="/kom" element={<Kom />} />
-        <Route path="/evenements" element={<Events />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/catalog/:id" element={<ProductDetail />} />
         <Route path="/a-propos" element={<About />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/countdown" element={<Countdown />} />
         <Route path="/resume" element={<Resume />} />
-        <Route path="/tour-irlande" element={<TourIrlande />} />
-        <Route path="/tour-irlande/admin" element={<TourIrlandeAdmin />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Home />} />
       </Routes>

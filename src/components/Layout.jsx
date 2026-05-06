@@ -6,11 +6,8 @@ import pandaLogo from "../assets/panda logo.png";
 const NAV_ITEMS = [
   { to: "/", label: "Accueil", end: true },
   { to: "/sorties", label: "Sorties" },
-  { to: "/kom", label: "KOM" },
-  { to: "/evenements", label: "Événements" },
   { to: "/catalog", label: "Shop" },
   { to: "/a-propos", label: "À propos" },
-  { to: "/tour-irlande", label: "Tour d'Irlande" },
 ];
 
 // Navigation bottom bar pour mobile
@@ -469,8 +466,6 @@ export default function Layout({ children }) {
               <h4 className="text-sm font-semibold text-white mb-4">Navigation</h4>
               <ul className="space-y-2 text-sm text-panda-400">
                 <li><Link to="/sorties" className="hover:text-bamboo-400 transition">Sorties</Link></li>
-                <li><Link to="/kom" className="hover:text-bamboo-400 transition">KOM du mois</Link></li>
-                <li><Link to="/evenements" className="hover:text-bamboo-400 transition">Événements</Link></li>
                 <li><Link to="/catalog" className="hover:text-bamboo-400 transition">Shop</Link></li>
               </ul>
             </div>
